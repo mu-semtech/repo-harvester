@@ -1,20 +1,7 @@
 from re import search, IGNORECASE
 from requests import get
-import github
 
 
-def parse_category(json):
-    """When given a repo json, determine the category"""
-    api_parseable = github.parse_category(json)
-    if api_parseable != None:
-        return categories[api_parseable]
-
-    else:
-        for override in overrides:
-            if search(override, json["name"], IGNORECASE):
-                return overrides[override]
-                
-        return _parse_category_from_name(json["name"])
 
 def _parse_category_from_name(name):
     """When given a name, use regex to determine the category"""
