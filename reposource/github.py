@@ -9,10 +9,25 @@ class GitHub(Reposource):
     def __init__(self, owner: str) -> None:
         super().__init__()
         self.owner = owner
+        self.repos = []
 
         repos_data = self.get_all_repos()
-        self.repos = self.repo_class_list_from_json(repos_data)
+        for repo_data in repos_data:
+            self.add_repo(repo_data)
+        
     
+    def add_repo(self, repo_json):
+
+        repo = Repo(
+            name=repo_json["name"],
+            repo_url=repo_json["html_url"],
+            homepage_url=repo_json["homepage"],
+            reposource=self,
+            category_data=repo_json,
+            other_data=repo_json
+        )
+         
+        self.repos.append(repo)
     
     def _parse_category(self, repo_other_data) -> Category:
         """Code to determine the Category from GitHub data"""
@@ -30,19 +45,6 @@ class GitHub(Reposource):
         return request.json()
 
 
-    def repo_class_list_from_json(self, json) -> List[Repo]:
-        """ 
-        When given , but returns repos parsed into the Repo class
-        """
-        parsed_repos = []
-        for repo_data in json:
-            parsed_repos.append(Repo(
-                name=repo_data["name"],
-                reposource=self,
-                category_data=repo_data,
-                other_data=repo_data
-                ))
-        return parsed_repos
 
 
     def file_url_generator(repo: Repo, filename: str) -> str:

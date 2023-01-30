@@ -50,7 +50,7 @@ class Reposource():
             if search(override, data["name"], IGNORECASE):
                 return overrides[override]
 
-        category = self._parse_category(data=data)
+        category = self._parse_category(data)
         if category != None:
             return category
 
@@ -97,8 +97,10 @@ class Repo():
     This class holds repository data that we want to export,
     as well as functions to get contents from the repository in question
     """
-    def __init__(self, name: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
+    def __init__(self, name: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
         self.name = name
+        self.repo_url = repo_url
+        self.homepage_url = homepage_url
         self.reposource = reposource
         self.category = self.reposource.parse_category(category_data)
         #self.url = json["html_url"]
@@ -106,7 +108,6 @@ class Repo():
         # Data of any kind, in case it is needed
         self.other_data = other_data
 
-        self.reposource.repos.append(self)
     
     def get_file_url(self, filename):
         return self.reposource.file_url_generator(self, filename)
