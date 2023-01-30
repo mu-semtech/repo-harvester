@@ -1,6 +1,6 @@
 from requests import get
 from typing import List
-from Repo import Repo, Reposource, categories
+from Repo import Repo, Reposource, Category, categories
 
 class GitHub(Reposource):
     """
@@ -11,18 +11,18 @@ class GitHub(Reposource):
         self.owner = owner
 
         repos_data = self.get_all_repos()
-        self.repos = self.list_and_parse_repos(repos_data)
+        self.repos = self.repo_class_list_from_json(repos_data)
     
     
-    def _parse_category(self, data):
+    def _parse_category(self, repo_other_data) -> Category:
         """Code to determine the Category from GitHub data"""
-        if data["archived"]:
+        if repo_other_data["archived"]:
             return categories["archive"]
         else:
             return None
 
 
-    def get_all_repos(self):
+    def get_all_repos(self) -> object:
         """ Simply requests all the repos of the specified user/organisation from GitHub API,
         returning the parsed json response
         """
@@ -30,12 +30,12 @@ class GitHub(Reposource):
         return request.json()
 
 
-    def list_and_parse_repos(self, repos_data) -> List[Repo]:
+    def repo_class_list_from_json(self, json) -> List[Repo]:
         """ 
         When given , but returns repos parsed into the Repo class
         """
         parsed_repos = []
-        for repo_data in repos_data:
+        for repo_data in json:
             parsed_repos.append(Repo(
                 name=repo_data["name"],
                 reposource=self,
@@ -45,6 +45,6 @@ class GitHub(Reposource):
         return parsed_repos
 
 
-    def file_url_generator(repo: Repo, filename: str):
+    def file_url_generator(repo: Repo, filename: str) -> str:
         return "https://raw.githubusercontent.com/{0}/{1}/{2}".format(
                 repo.other_data.full_name, repo.other_data.default_branch, filename)
