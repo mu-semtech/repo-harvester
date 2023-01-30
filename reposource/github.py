@@ -2,11 +2,10 @@ from requests import get
 from typing import List
 from Repo import Repo, Reposource, categories
 
-"""I tried to contain all GitHub specific-code here,
-in an attempt to make sure the other code is as platform-agnostic as possible
-"""
-
 class GitHub(Reposource):
+    """
+    The GitHub :class:`Reposource`
+    """
     def __init__(self, owner: str) -> None:
         super().__init__()
         self.owner = owner
@@ -14,9 +13,9 @@ class GitHub(Reposource):
         repos_data = self.get_all_repos()
         self.repos = self.list_and_parse_repos(repos_data)
     
-
+    
     def _parse_category(self, data):
-        """An appendix to Repo.parse_category, but with Github specific api stuff"""
+        """Code to determine the Category from GitHub data"""
         if data["archived"]:
             return categories["archive"]
         else:

@@ -1,42 +1,78 @@
 from re import search, IGNORECASE
 from requests import get
 from abc import abstractmethod
-from typing import List, Any
+from typing import List, Any, Union
+
+class Category():
+    """
+    The Category a :class:`Repo` belongs to.
+    This is an abstract, self definable thing,
+    referring to how *you* would like to sort and categorise the repository
+    """
+    def __init__(self, name, id, regex=""):
+        self.name = name
+        self.id = id
+        self.regex = regex
+    
+    def matches_string(self, string: str):
+        """If the category has a regex pattern, check if the provided parameter matches it"""
+        if self.regex:
+            return search(self.regex, string, IGNORECASE)
+        else:
+            return None
+    
+    def __str__(self) -> str:
+        return self.name
+
 
 
 class Reposource():
+    """
+    A source for one or more repositories. 
+    This encompasses:
+    - The host (e.g. GitHub, Gitea)
+    - Any info that is needed to find the repository (e.g. th owner in github.com/{owner}/{reponame})
+    - Code to (if possible) determine the :class:`Category` id
+    
+    """
     def __init__(self) -> None:
         self.repos = []
     
-    def parse_category(self, data: Any):
+    def parse_category(self, data: Any) -> Category:
         """
         This function leverages other internal functions to 
         determine the category of a repo.
 
         This will be used when creating a Repo object.
         """
+        
+        for override in overrides:
+            if search(override, data["name"], IGNORECASE):
+                return overrides[override]
+
         category = self._parse_category(data=data)
         if category != None:
             return category
 
-        else:  # TODO move override up?
-            for override in overrides:
-                if search(override, data["name"], IGNORECASE):
-                    return overrides[override]
-            
+        else:
             return self._parse_category_from_name(data["name"])  # TODO, this should be replaced
     
-    def file_url_generator(self, filename):
+    def file_url_generator(self, filename) -> str:
         """
-        *This is a function that should be overridden.*
+        When given a filename string (e.g. "README.md"), return the full, absolute path towards it.
 
-        When given a filename (e.g. README.md), return the full, absolute path towards it.
+        *This is a function that should be overridden.*
         """
         pass
     
-    def _parse_category(self, data):
+    def _parse_category(self, data) -> Union[Category, None]:
         """
-        This is a function that should be overridden.
+        When given a parameter, return either: 
+        - The name of the category,
+          based on data from the Reposource and/or repo
+        - None
+
+        *This is a function that should be overridden.*
         """
         return None
     
@@ -49,33 +85,17 @@ class Reposource():
         """
         for key in categories:
             category = categories[key]
-            if category.check_by_name(name):
+            if category.matches_string(name):
                 return category
         # Fallback
         return categories["tools"]  # TODO better fallback configuration
 
 
-class Category():
-    def __init__(self, name, id, regex=""):
-        self.name = name
-        self.id = id
-        self.regex = regex
-    
-    def check_by_name(self, param):
-        """If the category has a regex pattern, check it against the provided parameter"""
-        if self.regex:
-            return search(self.regex, param, IGNORECASE)
-        else:
-            return None
-    
-    def __str__(self) -> str:
-        return self.name
-
-
 
 class Repo():
     """
-    The repo class holds data that is relevant to our end goals only
+    This class holds repository data that we want to export,
+    as well as functions to get contents from the repository in question
     """
     def __init__(self, name: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
         self.name = name
@@ -99,6 +119,7 @@ class Repo():
     
     @property
     def readme(self):
+        """Returns the contents of the repository's README"""
         return self.get_file_contents("README.md")
     
     def __str__(self) -> str:
