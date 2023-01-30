@@ -1,6 +1,6 @@
 from requests import get
 from typing import List
-from .Reposource import Reposource, Repo
+from Repo import Repo, Reposource, categories
 
 """I tried to contain all GitHub specific-code here,
 in an attempt to make sure the other code is as platform-agnostic as possible
@@ -8,11 +8,22 @@ in an attempt to make sure the other code is as platform-agnostic as possible
 
 class GitHub(Reposource):
     def __init__(self, owner: str) -> None:
+        super().__init__()
         self.owner = owner
-        super().__init__(self.list_and_parse_repos())
+
+        repos_data = self.get_all_repos()
+        self.repos = self.list_and_parse_repos(repos_data)
+    
+
+    def _parse_category(self, data):
+        """An appendix to Repo.parse_category, but with Github specific api stuff"""
+        if data["archived"]:
+            return categories["archive"]
+        else:
+            return None
 
 
-    def list_repos_json(self):
+    def get_all_repos(self):
         """ Simply requests all the repos of the specified user/organisation from GitHub API,
         returning the parsed json response
         """
@@ -20,29 +31,21 @@ class GitHub(Reposource):
         return request.json()
 
 
-    def list_and_parse_repos(self) -> List[Repo]:
-        """ Leverages list_repos, but returns repos parsed into the Repo class
+    def list_and_parse_repos(self, repos_data) -> List[Repo]:
+        """ 
+        When given , but returns repos parsed into the Repo class
         """
-        unparsed_repos = self.list_repos_json()
         parsed_repos = []
-        for repo in unparsed_repos:
-            parsed_repos.append(Repo(repo))
+        for repo_data in repos_data:
+            parsed_repos.append(Repo(
+                name=repo_data["name"],
+                reposource=self,
+                category_data=repo_data,
+                other_data=repo_data
+                ))
         return parsed_repos
 
 
-    def file_url_generator(object, filename):
+    def file_url_generator(repo: Repo, filename: str):
         return "https://raw.githubusercontent.com/{0}/{1}/{2}".format(
-                object.full_name, object.default_branch, filename)
-
-    @staticmethod
-    def parse_category(repo):
-        """An appendix to Repo.parse_category, but with Github specific api stuff"""
-        if repo["archived"]:
-            return "archive"
-        else:
-            return None
-        """
-        Unused, as mu-project is a template but part of core
-        if repo["is_template"]:
-            return category["templates"]
-        """
+                repo.other_data.full_name, repo.other_data.default_branch, filename)

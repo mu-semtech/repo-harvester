@@ -6,6 +6,7 @@ if __name__ == "__main__":
     #repos = list_and_parse_repos()
     mu_semtech_github = GitHub(owner="mu-semtech")
 
+
     dict_category_repos = {}
     for category_id in categories:
         if category_id == categories["archive"].id:

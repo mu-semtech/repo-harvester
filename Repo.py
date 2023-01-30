@@ -1,16 +1,58 @@
 from re import search, IGNORECASE
 from requests import get
+from abc import abstractmethod
+from typing import List, Any
 
 
+class Reposource():
+    def __init__(self) -> None:
+        self.repos = []
+    
+    def parse_category(self, data: Any):
+        """
+        This function leverages other internal functions to 
+        determine the category of a repo.
 
-def _parse_category_from_name(name):
-    """When given a name, use regex to determine the category"""
-    for key in categories:
-        category = categories[key]
-        if category.check_by_name(name):
+        This will be used when creating a Repo object.
+        """
+        category = self._parse_category(data=data)
+        if category != None:
             return category
-    # Fallback
-    return categories["tools"]
+
+        else:  # TODO move override up?
+            for override in overrides:
+                if search(override, data["name"], IGNORECASE):
+                    return overrides[override]
+            
+            return self._parse_category_from_name(data["name"])  # TODO, this should be replaced
+    
+    def file_url_generator(self, filename):
+        """
+        *This is a function that should be overridden.*
+
+        When given a filename (e.g. README.md), return the full, absolute path towards it.
+        """
+        pass
+    
+    def _parse_category(self, data):
+        """
+        This is a function that should be overridden.
+        """
+        return None
+    
+    def _parse_category_from_name(self, name: str):
+        """
+        This internal function will be used when no category has been explicitly defined.
+        When given a name string, use regex to determine the category.
+
+        It is also the same across every Reposource!
+        """
+        for key in categories:
+            category = categories[key]
+            if category.check_by_name(name):
+                return category
+        # Fallback
+        return categories["tools"]  # TODO better fallback configuration
 
 
 class Category():
@@ -30,24 +72,26 @@ class Category():
         return self.name
 
 
-"""
-The repo class parses the raw GitHub data
-to the data that is relevant for docs generation
-"""
-class Repo():
-    def __init__(self, json) -> None:
-        self.name = json["name"]
-        self.category = parse_category(json)
-        self.url = json["html_url"]
 
-        # Needed for GitHub's file_url_generator specifically
-        self.full_name = json["full_name"]
-        self.default_branch =json["default_branch"]
+class Repo():
+    """
+    The repo class holds data that is relevant to our end goals only
+    """
+    def __init__(self, name: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
+        self.name = name
+        self.reposource = reposource
+        self.category = self.reposource.parse_category(category_data)
+        #self.url = json["html_url"]
+
+        # Data of any kind, in case it is needed
+        self.other_data = other_data
+
+        self.reposource.repos.append(self)
     
     def get_file_url(self, filename):
-        return github.file_url_generator(self, filename)
+        return self.reposource.file_url_generator(self, filename)
     
-    def get_file(self, path):
+    def get_file_contents(self, path):
         """Request a file, appending the repo url if needed"""
         if "http" not in path.lower():
             path = self.get_file_url(path)
@@ -55,7 +99,7 @@ class Repo():
     
     @property
     def readme(self):
-        return self.get_file("README.md")
+        return self.get_file_contents("README.md")
     
     def __str__(self) -> str:
         return self.name
