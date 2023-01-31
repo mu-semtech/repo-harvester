@@ -31,5 +31,5 @@ class DockerHub(Imagesource):
     
     def get_all_images(self, max_results=100):
         request = json(f"https://hub.docker.com/v2/repositories/{self.owner}/?page_size={max_results}")
-        return request.json()["results"]
+        return request["results"]
     
