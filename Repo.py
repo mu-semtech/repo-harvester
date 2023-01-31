@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 from request import json
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
@@ -12,7 +12,7 @@ class Repo():
         self.name = name
         self.imagename = name
 
-        self.tags : List[Tag] = []
+        self.tags = []
 
         self.repo_url = repo_url
         self.homepage_url = homepage_url
