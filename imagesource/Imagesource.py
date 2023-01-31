@@ -25,6 +25,7 @@ class Image():
     def __init__(self, name: str, url: str) -> None:
         self.name = name
         self.url = url
+        self.tags = []
     
     def __str__(self) -> str:
         return f"{self.name}@{self.url}"

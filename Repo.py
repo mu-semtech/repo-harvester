@@ -1,7 +1,8 @@
 from requests import get
-from typing import Any
+from typing import Any, List
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
+from Tag import Tag
 
 class Repo():
     """
@@ -11,6 +12,8 @@ class Repo():
     def __init__(self, name: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
         self.name = name
         self.imagename = name
+
+        self.tags : List[Tag] = []
 
         self.repo_url = repo_url
         self.homepage_url = homepage_url
@@ -22,7 +25,7 @@ class Repo():
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
-        
+
         self = override_repo_values(self)
     
     @property

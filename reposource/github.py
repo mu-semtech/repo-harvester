@@ -4,6 +4,8 @@ from Repo import Repo
 from reposource.Reposource import Reposource
 from imagesource.Imagesource import Imagesource
 from categories import Category, categories
+from request import json
+from Tag import Tag
 
 class GitHub(Reposource):
     """
@@ -18,6 +20,18 @@ class GitHub(Reposource):
         for repo_data in repos_data:
             self.add_repo(repo_data)
         
+        
+    
+    # def get_revisions(self):
+    #     for repo in self.repos:
+    #         docker_tags = repo
+    #         for tag in tags:
+    #             tag.name
+
+    #         print("Sleeping to prevent rate limiting...")
+    #         sleep(5)
+        
+    
     
     def add_repo(self, repo_json):
 
@@ -29,7 +43,13 @@ class GitHub(Reposource):
             category_data=repo_json,
             other_data=repo_json
         )
-         
+
+        print(f"Fetching tags for {repo.name}")
+        tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5) 
+        for tag_object in tag_array:
+            repo.tags.append(tag_object["name"])
+            #repo.tags.append(Tag(tag_object["name"], tag_object["commit"]))
+      
         self.repos.append(repo)
     
     def _parse_category(self, repo_other_data) -> Category:

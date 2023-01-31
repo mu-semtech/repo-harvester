@@ -1,5 +1,7 @@
-from imagesource.Imagesource import Imagesource, Image
+from time import sleep
 from requests import get
+from request import json
+from imagesource.Imagesource import Imagesource, Image
 
 class DockerHub(Imagesource):
     def __init__(self, owner: str) -> None:
@@ -18,6 +20,11 @@ class DockerHub(Imagesource):
         image = Image(
             name=image_json["name"],
             url=self.get_image_url(image_json["name"]))
+
+        tags_array = json(f"https://hub.docker.com/v2/repositories/{self.owner}/{image.name}/tags?page_size=1000", 5)["results"]
+        for tag_object in tags_array:
+            image.tags.append(tag_object["name"])
+
         self.images.append(image)
     
     def get_image_url(self, image_name=""):
