@@ -9,6 +9,7 @@ if __name__ == "__main__":
 
     dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)
 
+    print(dict_category_repos)
     print(mu_semtech_github.repos[0].image)
     # api = Api.config({
     #     "API_ROOT": "http://localhost/"

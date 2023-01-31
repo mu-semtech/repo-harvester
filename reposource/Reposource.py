@@ -24,10 +24,6 @@ class Reposource():
         This will be used when creating a Repo object.
         """
         
-        #for override in overrides:
-         #   if search(override, data["name"], IGNORECASE):
-          #      return overrides[override]
-
         category = self._parse_category(data)
         if category != None:
             return category
