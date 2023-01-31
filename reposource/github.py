@@ -4,7 +4,6 @@ from reposource.Reposource import Reposource
 from imagesource.Imagesource import Imagesource
 from categories import Category, categories
 from request import json
-from Tag import Tag
 
 class GitHub(Reposource):
     """
