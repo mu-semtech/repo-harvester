@@ -1,7 +1,6 @@
 from reposource.github import GitHub
 from imagesource.dockerhub import DockerHub
-from Repo import categories
-from jsonapi_requests import Api, JsonApiObject
+from categories import categories
 
 if __name__ == "__main__":
     """Get the repos, parse them, sort them by category, export them to build/*.html"""

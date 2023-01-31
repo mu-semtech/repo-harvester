@@ -1,4 +1,4 @@
-from Repo import Imagesource, Image
+from imagesource.Imagesource import Imagesource, Image
 from requests import get
 
 class DockerHub(Imagesource):

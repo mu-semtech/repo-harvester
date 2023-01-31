@@ -1,6 +1,7 @@
 from requests import get
 from typing import List
-from Repo import Repo, Reposource, Imagesource, Category, categories
+from Repo import Repo, Reposource, Imagesource
+from categories import Category, categories
 
 class GitHub(Reposource):
     """
