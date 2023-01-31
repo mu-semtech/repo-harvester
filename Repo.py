@@ -1,8 +1,7 @@
-from requests import get
 from typing import Any, List
+from request import json
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
-from Tag import Tag
 
 class Repo():
     """
@@ -31,6 +30,18 @@ class Repo():
     @property
     def image(self):
         return self.reposource.imagesource.get_image_by_name(self.imagename)
+    
+    @property
+    def revisions(self):
+        revisions_list = []
+
+        image = self.image
+        for tag in self.tags:
+            if tag in image.tags:
+                revisions_list.append(tag)
+        
+        print("Revisions: " + str(revisions_list))
+        return revisions_list
 
     
     def get_file_url(self, filename):
@@ -40,7 +51,7 @@ class Repo():
         """Request a file, appending the repo url if needed"""
         if "http" not in path.lower():
             path = self.get_file_url(path)
-        return get(path)
+        return json(path)
     
     @property
     def readme(self):

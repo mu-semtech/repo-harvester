@@ -1,5 +1,4 @@
 from time import sleep
-from requests import get
 from request import json
 from imagesource.Imagesource import Imagesource, Image
 
@@ -31,6 +30,6 @@ class DockerHub(Imagesource):
         return f"https://hub.docker.com/r/{self.owner}/{image_name}"
     
     def get_all_images(self, max_results=100):
-        request = get(f"https://hub.docker.com/v2/repositories/{self.owner}/?page_size={max_results}")
+        request = json(f"https://hub.docker.com/v2/repositories/{self.owner}/?page_size={max_results}")
         return request.json()["results"]
     

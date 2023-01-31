@@ -1,4 +1,3 @@
-from requests import get
 from typing import List
 from Repo import Repo
 from reposource.Reposource import Reposource
@@ -64,8 +63,8 @@ class GitHub(Reposource):
         """ Simply requests all the repos of the specified user/organisation from GitHub API,
         returning the parsed json response
         """
-        request = get("https://api.github.com/orgs/{}/repos".format(self.owner))
-        return request.json()
+        request = json("https://api.github.com/orgs/{}/repos".format(self.owner))
+        return request
 
 
 
