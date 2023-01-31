@@ -13,7 +13,6 @@ class Imagesource():
     
     def get_image_by_name(self, name: str):
         for image in self.images:
-            print(f"{image.name.lower()} == {name.lower()}")
             if image.name.lower() == name.lower():
                 return image
         return False
