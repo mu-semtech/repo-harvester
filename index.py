@@ -24,10 +24,10 @@ if __name__ == "__main__":
         "API_ROOT": "http://localhost/"
     })
 
-    endpoint = api.endpoint('microservices/')
+    endpoint = api.endpoint('microservices')
     endpoint.post(object=JsonApiObject(
         type="microservices",
         attributes = {
-            "title": "meowmeow"
+            "title": "meowmeows"
         }
     ))
