@@ -1,6 +1,6 @@
 from re import search, IGNORECASE
 from typing import Union, Any
-from categories import categories, Category, overrides
+from categories import categories, Category
 from imagesource.Imagesource import Imagesource
 
 class Reposource():
@@ -24,9 +24,9 @@ class Reposource():
         This will be used when creating a Repo object.
         """
         
-        for override in overrides:
-            if search(override, data["name"], IGNORECASE):
-                return overrides[override]
+        #for override in overrides:
+         #   if search(override, data["name"], IGNORECASE):
+          #      return overrides[override]
 
         category = self._parse_category(data)
         if category != None:

@@ -11,18 +11,23 @@ class Imagesource():
     def __init__(self) -> None:
         self.images = []
     
-    def get_image_for_repo(self, repo: object):
+    def get_image_by_name(self, name: str):
         for image in self.images:
-            print(f"{image.name.lower()} == {repo.name.lower()}")
-            if image.name.lower() == repo.name.lower():
+            print(f"{image.name.lower()} == {name.lower()}")
+            if image.name.lower() == name.lower():
                 return image
-        return next(image for image in self.images if image.name.lower() == repo.name.lower())
-
+        return False
 
 class Image():
     """
     A Repo can have multiple images, and are attached as so
     """
-    def __init__(self, name: str, image_url: str) -> None:
+    def __init__(self, name: str, url: str) -> None:
         self.name = name
-        self.image_url = image_url
+        self.url = url
+    
+    def __str__(self) -> str:
+        return f"{self.name}@{self.url}"
+    
+    def __repr__(self) -> str:
+        return self.__str__()

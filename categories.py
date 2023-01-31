@@ -32,11 +32,3 @@ categories = {
     "archive": Category("Archive", "archive"),  # Ignored
     "tools": Category("Tools", "tools"),
 }
-
-# This for repos not to be included in docs, and/or repos that break the naming conventions
-overrides = {
-    r"mu-cli": categories["tools"],
-    r"mu-cl-support": categories["archive"],
-    r"site-.*": categories["archive"],
-    r"presentation-.*": categories["archive"],
-}

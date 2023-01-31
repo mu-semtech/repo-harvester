@@ -1,7 +1,7 @@
 from requests import get
 from typing import Any
 from reposource.Reposource import Reposource
-from imagesource.Imagesource import Imagesource
+from overrides import override_repo_values
 
 class Repo():
     """
@@ -10,6 +10,8 @@ class Repo():
     """
     def __init__(self, name: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
         self.name = name
+        self.imagename = name
+
         self.repo_url = repo_url
         self.homepage_url = homepage_url
         
@@ -20,10 +22,12 @@ class Repo():
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
+        
+        self = override_repo_values(self)
     
     @property
     def image(self):
-        return self.reposource.imagesource.get_image_for_repo(self)
+        return self.reposource.imagesource.get_image_by_name(self.imagename)
 
     
     def get_file_url(self, filename):

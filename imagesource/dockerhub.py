@@ -17,7 +17,7 @@ class DockerHub(Imagesource):
             return
         image = Image(
             name=image_json["name"],
-            image_url=self.get_image_url(image_json["name"]))
+            url=self.get_image_url(image_json["name"]))
         self.images.append(image)
     
     def get_image_url(self, image_name=""):

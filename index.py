@@ -20,7 +20,7 @@ if __name__ == "__main__":
     
     print(dict_category_repos)
 
-    print(mu_semtech_github.repos[1].image)
+    print(mu_semtech_github.repos[0].image)
     # api = Api.config({
     #     "API_ROOT": "http://localhost/"
     # })
