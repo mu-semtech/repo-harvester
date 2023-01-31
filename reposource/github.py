@@ -1,15 +1,15 @@
 from requests import get
 from typing import List
-from Repo import Repo, Reposource, Category, categories
+from Repo import Repo, Reposource, Imagesource, Category, categories
 
 class GitHub(Reposource):
     """
     The GitHub :class:`Reposource`
     """
-    def __init__(self, owner: str) -> None:
-        super().__init__()
+    def __init__(self, owner: str, imagesource: Imagesource) -> None:
+        super().__init__(imagesource)
         self.owner = owner
-        self.repos = []
+        self.repos: List[Repo] = []
 
         repos_data = self.get_all_repos()
         for repo_data in repos_data:

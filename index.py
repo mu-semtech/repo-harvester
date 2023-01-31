@@ -1,12 +1,12 @@
 from reposource.github import GitHub
+from imagesource.dockerhub import DockerHub
 from Repo import categories
 from jsonapi_requests import Api, JsonApiObject
 
 if __name__ == "__main__":
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
     #repos = list_and_parse_repos()
-    mu_semtech_github = GitHub(owner="mu-semtech")
-
+    mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
 
     dict_category_repos = {}
     for category_id in categories:
@@ -20,14 +20,20 @@ if __name__ == "__main__":
         dict_category_repos[category.name] = category_repos
     
     print(dict_category_repos)
-    api = Api.config({
-        "API_ROOT": "http://localhost/"
-    })
 
-    endpoint = api.endpoint('microservices')
-    endpoint.post(object=JsonApiObject(
-        type="microservices",
-        attributes = {
-            "title": "meowmeows"
-        }
-    ))
+    print(mu_semtech_github.repos[1].image)
+    # api = Api.config({
+    #     "API_ROOT": "http://localhost/"
+    # })
+
+    # endpoint = api.endpoint('microservices')
+    
+    # for repo in mu_semtech_github.repos:
+        
+    #     endpoint.put(object=JsonApiObject(
+    #         type="microservices",
+    #         attributes = {
+    #             "title": "meowmeows"
+                
+    #         }
+    #     ))

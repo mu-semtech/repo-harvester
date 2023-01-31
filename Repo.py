@@ -35,8 +35,9 @@ class Reposource():
     - Code to (if possible) determine the :class:`Category` id
     
     """
-    def __init__(self) -> None:
+    def __init__(self, imagesource) -> None:
         self.repos = []
+        self.imagesource = imagesource
     
     def parse_category(self, data: Any) -> Category:
         """
@@ -91,7 +92,6 @@ class Reposource():
         return categories["tools"]  # TODO better fallback configuration
 
 
-
 class Repo():
     """
     This class holds repository data that we want to export,
@@ -101,12 +101,18 @@ class Repo():
         self.name = name
         self.repo_url = repo_url
         self.homepage_url = homepage_url
+        
         self.reposource = reposource
+
         self.category = self.reposource.parse_category(category_data)
         #self.url = json["html_url"]
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
+    
+    @property
+    def image(self):
+        return self.reposource.imagesource.get_image_for_repo(self)
 
     
     def get_file_url(self, filename):
@@ -128,6 +134,48 @@ class Repo():
     
     def __repr__(self) -> str:
         return self.__str__()
+
+
+
+class Imagesource():
+    """
+    A class that is very similar to Reposource,
+    containg information about the container host
+    (docker hub for example)
+    
+    This will be used by the Reposource class,
+    to be passed to the Repo, so that the Repo
+    can use get_images_for_repo!
+    """
+    def __init__(self) -> None:
+        self.images = []
+    
+    def get_image_for_repo(self, repo: Repo):
+        for image in self.images:
+            print(f"{image.name.lower()} == {repo.name.lower()}")
+            if image.name.lower() == repo.name.lower():
+                return image
+        return next(image for image in self.images if image.name.lower() == repo.name.lower())
+
+
+
+    # def get_images_for_repo(self, repo: Repo):
+    #     images = []
+    #     for image in self.images:
+    #         if image.name.lower() == repo.name.lower():
+    #             images.append(image)
+        
+    #     return images
+        
+
+
+class Image():
+    """
+    A Repo can have multiple images, and are attached as so
+    """
+    def __init__(self, name: str, image_url: str) -> None:
+        self.name = name
+        self.image_url = image_url
 
 # Sort by override, then specific regex
 # Regex & category names are based on mu-semtech naming conventions
