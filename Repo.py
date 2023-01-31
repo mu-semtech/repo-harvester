@@ -37,7 +37,7 @@ class Repo():
 
         image = self.image
         for tag in self.tags:
-            if tag in image.tags:
+            if tag.lstrip("v").lstrip("V") in image.tags:
                 revisions_list.append(tag)
         
         print("Revisions: " + str(revisions_list))
@@ -59,7 +59,7 @@ class Repo():
         return self.get_file_contents("README.md")
     
     def __str__(self) -> str:
-        return self.name
+        return f"{self.name}@{self.repo_url}"
     
     def __repr__(self) -> str:
         return self.__str__()
