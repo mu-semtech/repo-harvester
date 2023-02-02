@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
     repo = mu_semtech_github.repos[8]
     print(repo)
+    print(repo.description)
     print(repo.image)
     print(repo.revisions)
 

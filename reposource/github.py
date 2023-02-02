@@ -35,6 +35,7 @@ class GitHub(Reposource):
 
         repo = Repo(
             name=repo_json["name"],
+            description=repo_json["description"],
             repo_url=repo_json["html_url"],
             homepage_url=repo_json["homepage"],
             reposource=self,

@@ -8,8 +8,9 @@ class Repo():
     This class holds repository data that we want to export,
     as well as functions to get contents from the repository in question
     """
-    def __init__(self, name: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
+    def __init__(self, name: str, description: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
         self.name = name
+        self.description = description
         self.imagename = name
 
         self.tags = []
