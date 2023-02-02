@@ -1,7 +1,8 @@
 from typing import List
 from re import findall, IGNORECASE, MULTILINE
 from Repo import Repo
-from SPARQLWrapper import SPARQLWrapper, POST, DIGEST
+from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
+from urllib.error import HTTPError
 
 class Prefix():
     def __init__(self, key, url) -> None:
@@ -20,7 +21,6 @@ class Prefix():
 
 
 def import_resources_prefixes(path) -> List[Prefix]:
-    print("meow")
     with open(path, mode="r", encoding="UTF-8") as file:
         data = file.read()
     
@@ -37,24 +37,46 @@ def import_resources_prefixes(path) -> List[Prefix]:
 def add_repos_to_triplestore(repos: List[Repo]):
     prefixes = import_resources_prefixes("config/resources/repository.lisp")
     
+    prefixes.append(Prefix("mu", "http://mu.semte.ch/vocabularies/core/"))
 
-    sparql = SPARQLWrapper("localhost:8890")
-    sparql.setHTTPAuth(DIGEST)
+    sparql = SPARQLWrapper("http://localhost:8890/sparql")
+    sparql.setHTTPAuth(BASIC)
     sparql.setCredentials("dba", "dba")
     sparql.setMethod("POST")
+    
+
+    sparql.addDefaultGraph("http://info.mu.semte.ch/microservices/")
 
     query = ""
 
     for prefix in prefixes:
         query += prefix.to_sparql_syntax() + "\n"
+    
+    query += "\nINSERT DATA {\n"
+    
+    #for repo in repos:
+     #   query += f"""
+      #
+       # """
+    query += """
+        GRAPH <http://mu.semte.ch/application> {{
+            <http://info.mu.semte.ch/microservices/{uuid}> a ext:Microservice;
+            mu:uuid "{uuid}";
+            dct:title "{title}" .
 
-    
-    
+        }}
+        """.format(
+            uuid="19d0c1ef-e0f5-4cc0-8364-1697b99951ee",
+            title="Meowtest",
+        )
+    query += "}"
 
     print(query)
 
-    return
-
     sparql.setQuery(query)
-    pass
+    try:
+        exec = sparql.query()
+        print (exec.info())
+    except HTTPError as e:
+        print(e)
 
