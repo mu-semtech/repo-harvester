@@ -3,6 +3,7 @@ from re import findall, IGNORECASE, MULTILINE
 from Repo import Repo
 from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
 from urllib.error import HTTPError
+from uuid import uuid3, NAMESPACE_DNS
 
 class Prefix():
     def __init__(self, key, url) -> None:
@@ -54,21 +55,27 @@ def add_repos_to_triplestore(repos: List[Repo]):
     
     query += "\nINSERT DATA {\n"
     
-    #for repo in repos:
-     #   query += f"""
-      #
-       # """
-    query += """
-        GRAPH <http://mu.semte.ch/application> {{
-            <http://info.mu.semte.ch/microservices/{uuid}> a ext:Microservice;
-            mu:uuid "{uuid}";
-            dct:title "{title}" .
+    for repo in repos:
+        
+        query += """
+            GRAPH <http://mu.semte.ch/application> {{
+                <http://info.mu.semte.ch/microservices/{uuid}> a ext:Microservice;
+                mu:uuid "{uuid}";
+                dct:title "{title}";
+                dct:description "{description}";
+                ext:repository "{repourl}";
+                ext:isCoreMicroservice {isCore}.
 
-        }}
-        """.format(
-            uuid="19d0c1ef-e0f5-4cc0-8364-1697b99951ee",
-            title="Meowtest",
-        )
+            }}
+            """.format(
+                uuid=uuid3(NAMESPACE_DNS, repo.name),
+                title=repo.name,
+                description=repo.description,
+                repourl=repo.repo_url,
+                isCore="true" if repo.category.id == "core" else "false"
+                
+                
+            )
     query += "}"
 
     print(query)
