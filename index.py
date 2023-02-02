@@ -1,6 +1,7 @@
 from reposource.github import GitHub
 from imagesource.dockerhub import DockerHub
 from categories import categories, sort_into_category_dict
+from semtech import add_repos_to_triplestore
 
 if __name__ == "__main__":
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
@@ -15,6 +16,9 @@ if __name__ == "__main__":
     print(repo)
     print(repo.image)
     print(repo.revisions)
+
+    add_repos_to_triplestore(mu_semtech_github.repos)
+
     # api = Api.config({
     #     "API_ROOT": "http://localhost/"
     # })
