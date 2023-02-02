@@ -1,5 +1,5 @@
 from typing import Any
-from request import json
+from request import json, contents
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
 
@@ -52,7 +52,7 @@ class Repo():
         """Request a file, appending the repo url if needed"""
         if "http" not in path.lower():
             path = self.get_file_url(path)
-        return json(path)
+        return contents(path)
     
     @property
     def readme(self):

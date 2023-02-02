@@ -69,6 +69,6 @@ class GitHub(Reposource):
 
 
 
-    def file_url_generator(repo: Repo, filename: str) -> str:
+    def file_url_generator(self, repo: Repo, filename: str) -> str:
         return "https://raw.githubusercontent.com/{0}/{1}/{2}".format(
-                repo.other_data.full_name, repo.other_data.default_branch, filename)
+                repo.other_data["full_name"], repo.other_data["default_branch"], filename)

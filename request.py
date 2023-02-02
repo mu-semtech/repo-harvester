@@ -29,14 +29,18 @@ def request(url):
 
     return data
 
-def json(url, timeout_if_not_cached=0):
+def contents(url, timeout_if_not_cached=0, json=False):
     data = get_from_cache(url)
     if data:
-        return loads(data)
+        return loads(data) if json else data
     else:
         data = request(url)
         if timeout_if_not_cached > 0:
             print(f"Timeout passed! Sleeping for {timeout_if_not_cached}")
             sleep(timeout_if_not_cached)
-        return data.json()
+        return data.json() if json else data.content
             
+
+
+def json(url, timeout_if_not_cached=0):
+    return contents(url, timeout_if_not_cached, True)
