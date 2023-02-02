@@ -1,5 +1,5 @@
 from typing import List
-from re import findall, IGNORECASE, MULTILINE
+from re import findall, IGNORECASE, MULTILINE, escape
 from Repo import Repo
 from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
 from urllib.error import HTTPError
@@ -34,6 +34,7 @@ def import_resources_prefixes(path) -> List[Prefix]:
 
     return prefixes
 
+# TODO fix DRY
 QUERY_NO_IMAGE = """
 GRAPH <http://mu.semte.ch/application> {{
     <http://info.mu.semte.ch/repos/{uuid}> a ext:Repo;
@@ -41,6 +42,7 @@ GRAPH <http://mu.semte.ch/application> {{
     dct:title "{title}";
     dct:description "{description}";
     ext:category "{category}";
+    ext:readme "{readme}";
 
     ext:repositoryUrl "{repoUrl}".
 }}
@@ -53,6 +55,7 @@ GRAPH <http://mu.semte.ch/application> {{
     dct:title "{title}";
     dct:description "{description}";
     ext:category "{category}";
+    ext:readme "{readme}";
 
     ext:repositoryUrl "{repoUrl}";
     ext:imageUrl "{imageUrl}".
@@ -90,6 +93,8 @@ def add_repos_to_triplestore(repos: List[Repo]):
                 title=repo.name,
                 description=repo.description,
                 category=repo.category.url,
+                
+                readme="repo.readme",
 
                 repoUrl=repo.repo_url,
                 imageUrl=repo.image.url
@@ -97,12 +102,12 @@ def add_repos_to_triplestore(repos: List[Repo]):
     
     query += "}"
 
-    print(query)
+    #print(query)
 
     sparql.setQuery(query)
     try:
         exec = sparql.query()
-        print (exec.info())
+        #print (exec.info())
     except HTTPError as e:
         print(e)
 
