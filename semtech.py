@@ -34,6 +34,31 @@ def import_resources_prefixes(path) -> List[Prefix]:
 
     return prefixes
 
+QUERY_NO_IMAGE = """
+GRAPH <http://mu.semte.ch/application> {{
+    <http://info.mu.semte.ch/repos/{uuid}> a ext:Repo;
+    mu:uuid "{uuid}";
+    dct:title "{title}";
+    dct:description "{description}";
+    ext:category "{category}";
+
+    ext:repositoryUrl "{repoUrl}".
+}}
+"""
+
+QUERY_WITH_IMAGE = """
+GRAPH <http://mu.semte.ch/application> {{
+    <http://info.mu.semte.ch/repos/{uuid}> a ext:Repo;
+    mu:uuid "{uuid}";
+    dct:title "{title}";
+    dct:description "{description}";
+    ext:category "{category}";
+
+    ext:repositoryUrl "{repoUrl}";
+    ext:imageUrl "{imageUrl}".
+}}
+"""
+
 
 def add_repos_to_triplestore(repos: List[Repo]):
     prefixes = import_resources_prefixes("config/resources/repository.lisp")
@@ -46,7 +71,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
     sparql.setMethod("POST")
     
 
-    sparql.addDefaultGraph("http://info.mu.semte.ch/microservices/")
+    sparql.addDefaultGraph("http://info.mu.semte.ch/repos/")
 
     query = ""
 
@@ -56,26 +81,20 @@ def add_repos_to_triplestore(repos: List[Repo]):
     query += "\nINSERT DATA {\n"
     
     for repo in repos:
-        
-        query += """
-            GRAPH <http://mu.semte.ch/application> {{
-                <http://info.mu.semte.ch/microservices/{uuid}> a ext:Microservice;
-                mu:uuid "{uuid}";
-                dct:title "{title}";
-                dct:description "{description}";
-                ext:repository "{repourl}";
-                ext:isCoreMicroservice {isCore}.
 
-            }}
-            """.format(
+        format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
+
+        
+        query += format_string.format(
                 uuid=uuid3(NAMESPACE_DNS, repo.name),
                 title=repo.name,
                 description=repo.description,
-                repourl=repo.repo_url,
-                isCore="true" if repo.category.id == "core" else "false"
-                
-                
+                category=repo.category.url,
+
+                repoUrl=repo.repo_url,
+                imageUrl=repo.image.url
             )
+    
     query += "}"
 
     print(query)
