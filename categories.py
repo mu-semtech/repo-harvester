@@ -11,6 +11,10 @@ class Category():
         self.id = id
         self.regex = regex
     
+    @property
+    def url(self):
+        return f"http://mu.semte.ch/vocabularies/ext/category/{self.id}"
+    
     def matches_string(self, string: str):
         """If the category has a regex pattern, check if the provided parameter matches it"""
         if self.regex:

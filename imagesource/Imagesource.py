@@ -15,7 +15,7 @@ class Imagesource():
         for image in self.images:
             if image.name.lower() == name.lower():
                 return image
-        return False
+        return Image("", "")
 
 class Image():
     """
