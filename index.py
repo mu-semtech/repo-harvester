@@ -1,7 +1,7 @@
 from reposource.github import GitHub
 from imagesource.dockerhub import DockerHub
 from categories import categories, sort_into_category_dict
-from semtech import add_repos_to_triplestore
+from semtech import add_repos_to_triplestore, clear_all_triples
 
 if __name__ == "__main__":
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
@@ -17,6 +17,10 @@ if __name__ == "__main__":
     print(repo.description)
     print(repo.image)
     print(repo.revisions)
+
+    clear_all_triples()
+
+    input("Cleared?")
 
     add_repos_to_triplestore(mu_semtech_github.repos)
 

@@ -62,19 +62,35 @@ GRAPH <http://mu.semte.ch/application> {{
 }}
 """
 
+def setup_sparql():
+    sparql = SPARQLWrapper("http://localhost:8890/sparql")
+    sparql.setHTTPAuth(BASIC)
+    sparql.setCredentials("dba", "dba")
+    sparql.setMethod("POST")
+    
+    sparql.addDefaultGraph("http://info.mu.semte.ch/repos/")
+    return sparql
+
+def run_sparql(sparql, query):
+    sparql.setQuery(query)
+    try:
+        exec = sparql.query()
+        print(exec)
+        #print (exec.info())
+    except HTTPError as e:
+        print(e)
+
+def clear_all_triples():
+    sparql = setup_sparql()
+    run_sparql(sparql, "DELETE { GRAPH <http://mu.semte.ch/application> { ?s ?p ?o } }")
+
 
 def add_repos_to_triplestore(repos: List[Repo]):
     prefixes = import_resources_prefixes("config/resources/repository.lisp")
     
     prefixes.append(Prefix("mu", "http://mu.semte.ch/vocabularies/core/"))
 
-    sparql = SPARQLWrapper("http://localhost:8890/sparql")
-    sparql.setHTTPAuth(BASIC)
-    sparql.setCredentials("dba", "dba")
-    sparql.setMethod("POST")
-    
-
-    sparql.addDefaultGraph("http://info.mu.semte.ch/repos/")
+    sparql = setup_sparql()
 
     query = ""
 
@@ -94,7 +110,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
                 description=repo.description,
                 category=repo.category.url,
                 
-                readme="repo.readme",
+                readme="radme",
 
                 repoUrl=repo.repo_url,
                 imageUrl=repo.image.url
@@ -103,11 +119,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
     query += "}"
 
     #print(query)
+    run_sparql(sparql, query)
 
-    sparql.setQuery(query)
-    try:
-        exec = sparql.query()
-        #print (exec.info())
-    except HTTPError as e:
-        print(e)
+    
 
