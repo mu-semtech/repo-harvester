@@ -1,9 +1,10 @@
 from typing import List
-from re import findall, IGNORECASE, MULTILINE, escape
+from re import findall, IGNORECASE, MULTILINE, sub
 from Repo import Repo
 from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
 from urllib.error import HTTPError
 from uuid import uuid3, NAMESPACE_DNS
+from markupsafe import Markup, escape
 
 class Prefix():
     def __init__(self, key, url) -> None:
@@ -75,7 +76,7 @@ def run_sparql(sparql, query):
     sparql.setQuery(query)
     try:
         exec = sparql.query()
-        print(exec)
+        print(exec.info())
         #print (exec.info())
     except HTTPError as e:
         print(e)
@@ -104,19 +105,30 @@ def add_repos_to_triplestore(repos: List[Repo]):
         format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
 
         
+        print("----------")
+        print(escape(repo.readme))
         query += format_string.format(
                 uuid=uuid3(NAMESPACE_DNS, repo.name),
                 title=repo.name,
                 description=repo.description,
                 category=repo.category.url,
                 
-                readme="radme",
+                readme=
+                   # escape(Markup(
+                        repo.readme
+                        .replace("\\", "&bsol;")
+                        .replace('"', "&quot;")
+                        #.replace("'", "&apos;")
+                        .replace("\n", "")
+                        #.replace("*", "")   
+                    #))
+                    ,
 
                 repoUrl=repo.repo_url,
                 imageUrl=repo.image.url
             )
     
-    query += "}"
+    query += "}\n"
 
     #print(query)
     run_sparql(sparql, query)

@@ -20,7 +20,6 @@ if __name__ == "__main__":
 
     clear_all_triples()
 
-    input("Cleared?")
 
     add_repos_to_triplestore(mu_semtech_github.repos)
 
