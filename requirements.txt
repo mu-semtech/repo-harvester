@@ -1,1 +1,5 @@
+MarkupSafe==2.0.1
 requests==2.24.0
+Flask==2.0.3
+SPARQLWrapper==2.0.0
+unicode_slugify==0.1.5

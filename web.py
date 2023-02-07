@@ -2,6 +2,11 @@ from reposource.github import GitHub
 from imagesource.dockerhub import DockerHub
 from categories import categories, sort_into_category_dict
 from semtech import add_repos_to_triplestore, clear_all_triples
+from flask import Flask
+
+app = Flask(__name__)
+
+
 
 @app.route("/update", methods=["POST"])
 def update():
