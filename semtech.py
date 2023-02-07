@@ -119,7 +119,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
                         .replace("\\", "&bsol;")
                         .replace('"', "&quot;")
                         #.replace("'", "&apos;")
-                        .replace("\n", "")
+                        .replace("\n", "\\n")
                         #.replace("*", "")   
                     #))
                     ,
