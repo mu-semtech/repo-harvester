@@ -118,9 +118,6 @@ def add_repos_to_triplestore(repos: List[Repo]):
                 imageUrl=repo.image.url
             )
         
-        for 
-        
-    
     query += "}\n"
 
     #print(query)
