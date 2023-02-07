@@ -63,6 +63,20 @@ GRAPH <http://mu.semte.ch/application> {{
 }}
 """
 
+REVISION = """
+GRAPH <http://mu.semte.ch/application> {{
+    <http://info.mu.semte.ch/repos/{uuid}> a ext:RepoRevision;
+    mu:uuid "{uuid}";
+    ext:revisionImageTag "{title}";
+    dct:description "{description}";
+    ext:category "{category}";
+    ext:readme "{readme}";
+
+    ext:repositoryUrl "{repoUrl}";
+    ext:imageUrl "{imageUrl}".
+}}
+"""
+
 def setup_sparql():
     sparql = SPARQLWrapper("http://localhost:8890/sparql")
     sparql.setHTTPAuth(BASIC)
@@ -105,28 +119,20 @@ def add_repos_to_triplestore(repos: List[Repo]):
         format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
 
         
-        print("----------")
-        print(escape(repo.readme))
         query += format_string.format(
                 uuid=uuid3(NAMESPACE_DNS, repo.name),
                 title=repo.name,
                 description=repo.description,
                 category=repo.category.url,
                 
-                readme=
-                   # escape(Markup(
-                        repo.readme
-                        .replace("\\", "&bsol;")
-                        .replace('"', "&quot;")
-                        #.replace("'", "&apos;")
-                        .replace("\n", "\\n")
-                        #.replace("*", "")   
-                    #))
-                    ,
+                #readme=
 
                 repoUrl=repo.repo_url,
                 imageUrl=repo.image.url
             )
+        
+        for 
+        
     
     query += "}\n"
 

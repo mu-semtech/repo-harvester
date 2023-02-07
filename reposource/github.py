@@ -18,7 +18,6 @@ class GitHub(Reposource):
         for repo_data in repos_data:
             self.add_repo(repo_data)
         
-        
     
     # def get_revisions(self):
     #     for repo in self.repos:
@@ -67,8 +66,15 @@ class GitHub(Reposource):
         return request
 
 
+    def url_generator(self, repo: Repo, version: str=None):
+        if version == None:
+            version = repo.other_data["default_branch"]
+        return "https://github.com/{0}/tree/{1}".format(
+            repo.other_data["full_name"], version
+        )
 
-
-    def file_url_generator(self, repo: Repo, filename: str) -> str:
+    def file_url_generator(self, repo: Repo, filename: str, version: str=None) -> str:
+        if version == None:
+            version = repo.other_data["default_branch"]
         return "https://raw.githubusercontent.com/{0}/{1}/{2}".format(
-                repo.other_data["full_name"], repo.other_data["default_branch"], filename)
+                repo.other_data["full_name"], version, filename)

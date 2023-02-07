@@ -31,9 +31,18 @@ class Reposource():
         else:
             return self._parse_category_from_name(data["name"])  # TODO, this should be replaced
     
-    def file_url_generator(self, filename) -> str:
+    def url_generator(self, version=None) -> str:
+        """
+        When given a version (e.g. main, master, v1.1, c23a3ef...) return the URL to that release/tag/commit
+
+        *This is a function that should be overridden.*
+        """
+        pass
+
+    def file_url_generator(self, filename, version=None) -> str:
         """
         When given a filename string (e.g. "README.md"), return the full, absolute path towards it.
+        When this is optionally passed a version (can be a release tag, branch...), make sure to return that version
 
         *This is a function that should be overridden.*
         """
