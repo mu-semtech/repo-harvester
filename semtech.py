@@ -82,7 +82,7 @@ def run_sparql(sparql, query):
 
 def clear_all_triples():
     sparql = setup_sparql()
-    run_sparql(sparql, "DELETE { GRAPH <http://mu.semte.ch/application> { ?s ?p ?o } }")
+    run_sparql(sparql, 'DROP SILENT GRAPH <http://mu.semte.ch/application>')
 
 
 def add_repos_to_triplestore(repos: List[Repo]):
