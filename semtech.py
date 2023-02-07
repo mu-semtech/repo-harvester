@@ -20,20 +20,11 @@ class Prefix():
     def __repr__(self) -> str:
         return self.to_sparql_syntax()
 
-
-
-def import_resources_prefixes(path) -> List[Prefix]:
-    with open(path, mode="r", encoding="UTF-8") as file:
-        data = file.read()
-    
-    re_prefixes = r'^(\(add-prefix )"(\S*)" "(\S*)"(\))'
-
-    matches = findall(re_prefixes, data, IGNORECASE | MULTILINE)
-    prefixes = []
-    for match in matches:
-        prefixes.append(Prefix(match[1], match[2]))
-
-    return prefixes
+PREFIXES = [
+    Prefix("mu", "http://mu.semte.ch/vocabularies/core/"),
+    Prefix("ext", "http://mu.semte.ch/vocabularies/ext/"),
+    Prefix("dct", "http://purl.org/dc/terms/")
+]
 
 # TODO fix DRY
 QUERY_NO_IMAGE = """
@@ -101,15 +92,11 @@ def clear_all_triples():
 
 
 def add_repos_to_triplestore(repos: List[Repo]):
-    prefixes = import_resources_prefixes("config/resources/repository.lisp")
-    
-    prefixes.append(Prefix("mu", "http://mu.semte.ch/vocabularies/core/"))
-
     sparql = setup_sparql()
 
     query = ""
 
-    for prefix in prefixes:
+    for prefix in PREFIXES:
         query += prefix.to_sparql_syntax() + "\n"
     
     query += "\nINSERT DATA {\n"
