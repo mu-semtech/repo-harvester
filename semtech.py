@@ -5,6 +5,9 @@ from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
 from urllib.error import HTTPError
 from uuid import uuid3, NAMESPACE_DNS
 from markupsafe import Markup, escape
+from datetime import datetime
+from helpers import generate_uuid, query, update
+from escape_helpers import sparql_escape
 
 class Prefix():
     def __init__(self, key, url) -> None:
@@ -65,47 +68,26 @@ GRAPH <http://mu.semte.ch/application> {{
 }}
 """
 
-def setup_sparql():
-    sparql = SPARQLWrapper("http://db:8890/sparql")
-    sparql.setHTTPAuth(BASIC)
-    sparql.setCredentials("dba", "dba")
-    sparql.setMethod("POST")
-    
-    sparql.addDefaultGraph("http://info.mu.semte.ch/repos/")
-    return sparql
-
-def run_sparql(sparql, query):
-    sparql.setQuery(query)
-    try:
-        exec = sparql.query()
-        print(exec.info())
-        #print (exec.info())
-    except HTTPError as e:
-        print(e)
-
 def clear_all_triples():
-    sparql = setup_sparql()
-    run_sparql(sparql, 'DROP SILENT GRAPH <http://mu.semte.ch/application>')
+    query('DROP SILENT GRAPH <http://mu.semte.ch/application>')
 
 
 def add_repos_to_triplestore(repos: List[Repo]):
-    sparql = setup_sparql()
-
-    query = ""
+    query_string = ""
 
     for prefix in PREFIXES:
-        query += prefix.to_sparql_syntax() + "\n"
+        query_string += prefix.to_sparql_syntax() + "\n"
     
-    query += "\nINSERT DATA {\n"
+    query_string += "\nINSERT DATA {\n"
     
     for repo in repos:
 
         format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
 
         
-        query += format_string.format(
-                uuid=uuid3(NAMESPACE_DNS, repo.name),
-                title=repo.name,
+        query_string += format_string.format(
+                uuid=generate_uuid(),
+                title=repo.name + datetime.today().strftime("-%H-%M-%S"),
                 description=repo.description,
                 category=repo.category.url,
                 
@@ -115,10 +97,12 @@ def add_repos_to_triplestore(repos: List[Repo]):
                 imageUrl=repo.image.url
             )
         
-    query += "}\n"
+    query_string += "}\n"
+
+    query(query_string)
 
     #print(query)
-    run_sparql(sparql, query)
+    #run_sparql(sparql, query_string)
 
     
 
