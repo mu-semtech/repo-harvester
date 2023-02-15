@@ -2,14 +2,18 @@ from reposource.github import GitHub
 from imagesource.dockerhub import DockerHub
 from categories import categories, sort_into_category_dict
 from semtech import add_repos_to_triplestore, clear_all_triples
-from flask import Flask
-
-app = Flask(__name__)
 
 
 
-@app.route("/update", methods=["POST"])
+@app.route("/")
+def index():
+    print("index")
+    return "<h1>Repo harvester online!</h1>"
+
+
+@app.route("/update", methods=["GET", "POST"])
 def update():
+    print("Updating...")
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
     #repos = list_and_parse_repos()
     mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
