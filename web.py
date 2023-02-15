@@ -31,3 +31,4 @@ def update():
     clear_all_triples()
 
     add_repos_to_triplestore(mu_semtech_github.repos)
+    return "<h1>Repo harvester updated!</h1>"

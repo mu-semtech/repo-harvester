@@ -34,7 +34,6 @@ GRAPH <http://mu.semte.ch/application> {{
     dct:title "{title}";
     dct:description "{description}";
     ext:category "{category}";
-    ext:readme "{readme}";
 
     ext:repositoryUrl "{repoUrl}".
 }}
@@ -47,7 +46,6 @@ GRAPH <http://mu.semte.ch/application> {{
     dct:title "{title}";
     dct:description "{description}";
     ext:category "{category}";
-    ext:readme "{readme}";
 
     ext:repositoryUrl "{repoUrl}";
     ext:imageUrl "{imageUrl}".
@@ -61,7 +59,6 @@ GRAPH <http://mu.semte.ch/application> {{
     ext:revisionImageTag "{title}";
     dct:description "{description}";
     ext:category "{category}";
-    ext:readme "{readme}";
 
     ext:repositoryUrl "{repoUrl}";
     ext:imageUrl "{imageUrl}".
@@ -69,7 +66,7 @@ GRAPH <http://mu.semte.ch/application> {{
 """
 
 def setup_sparql():
-    sparql = SPARQLWrapper("http://localhost:8890/sparql")
+    sparql = SPARQLWrapper("http://db:8890/sparql")
     sparql.setHTTPAuth(BASIC)
     sparql.setCredentials("dba", "dba")
     sparql.setMethod("POST")
