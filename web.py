@@ -7,9 +7,7 @@ from semtech import add_repos_to_triplestore, clear_all_triples
 
 @app.route("/")
 def index():
-    print("index")
-    return "<h1>Repo harvester online!</h1>"
-
+    return "Repo harvester online!"
 
 @app.route("/update", methods=["GET", "POST"])
 def update():
