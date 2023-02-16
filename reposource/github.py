@@ -18,20 +18,7 @@ class GitHub(Reposource):
         for repo_data in repos_data:
             self.add_repo(repo_data)
         
-    
-    # def get_revisions(self):
-    #     for repo in self.repos:
-    #         docker_tags = repo
-    #         for tag in tags:
-    #             tag.name
-
-    #         print("Sleeping to prevent rate limiting...")
-    #         sleep(5)
-        
-    
-    
     def add_repo(self, repo_json):
-
         repo = Repo(
             name=repo_json["name"],
             description=repo_json["description"],
@@ -57,14 +44,12 @@ class GitHub(Reposource):
         else:
             return None
 
-
     def get_all_repos(self) -> object:
         """ Simply requests all the repos of the specified user/organisation from GitHub API,
         returning the parsed json response
         """
         request = json("https://api.github.com/orgs/{}/repos".format(self.owner))
         return request
-
 
     def url_generator(self, repo: Repo, version: str=None):
         if version == None:
