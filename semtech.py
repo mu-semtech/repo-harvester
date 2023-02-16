@@ -1,6 +1,6 @@
 from typing import List
 from helpers import generate_uuid, update, log
-from escape_helpers import sparql_escape
+from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri
 from datetime import datetime
 from Repo import Repo
 
@@ -13,26 +13,22 @@ PREFIXES = """
 # TODO fix DRY
 QUERY_NO_IMAGE = """
 GRAPH <http://mu.semte.ch/application> {{
-    <http://info.mu.semte.ch/repos/{uuid}> a ext:Repo;
-    mu:uuid "{uuid}";
-    dct:title "{title}";
-    dct:description "{description}";
-    ext:category "{category}";
-
-    ext:repositoryUrl "{repoUrl}".
+    {resource} a ext:Repo;
+    mu:uuid {uuid};
+    dct:title {title};
+    dct:description {description};
+    ext:category {category}.
 }}
 """
 
 QUERY_WITH_IMAGE = """
 GRAPH <http://mu.semte.ch/application> {{
-    <http://info.mu.semte.ch/repos/{uuid}> a ext:Repo;
-    mu:uuid "{uuid}";
-    dct:title "{title}";
-    dct:description "{description}";
-    ext:category "{category}";
-
-    ext:repositoryUrl "{repoUrl}";
-    ext:imageUrl "{imageUrl}".
+    {resource} a ext:Repo;
+    mu:uuid {uuid};
+    dct:title {title};
+    dct:description {description};
+    ext:category {category};
+    ext:imageUrl {imageUrl}.
 }}
 """
 
@@ -69,22 +65,17 @@ def add_repos_to_triplestore(repos: List[Repo]):
     query_string_revisions = query_string_repos
     
     for repo in repos:
-
         format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
-
         repo_uuid = generate_uuid()
-        
         query_string_repos += format_string.format(
-                uuid=repo_uuid,
-                title=repo.name + datetime.today().strftime("-%H-%M-%S"),
-                description=repo.description,
-                category=repo.category.url,
-                
-                #readme=
-
-                repoUrl=repo.repo_url,
-                imageUrl=repo.image.url
-            )
+            resource=sparql_escape_uri(repo.repo_url),
+            uuid=sparql_escape_string(repo_uuid),
+            title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
+            description=sparql_escape_string(repo.description),
+            category=sparql_escape_uri(repo.category.url),
+            #readme=
+            imageUrl=sparql_escape_uri(repo.image.url)
+        )
         
         for revision in repo.revisions:
             query_string_revisions += REVISION.format(
