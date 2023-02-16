@@ -11,28 +11,45 @@ PREFIXES = """
 """
 
 # TODO fix DRY
-QUERY_NO_IMAGE = """
+SPARQL_REPO_BASE = """
 GRAPH <http://mu.semte.ch/application> {{
     {resource} a ext:Repo;
     mu:uuid {uuid};
     dct:title {title};
     dct:description {description};
-    ext:category {category}.
+    ext:category {category}EXTRA.
 }}
 """
 
-QUERY_WITH_IMAGE = """
-GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:Repo;
+SPARQL_REPO_NO_IMAGE = SPARQL_REPO_BASE.replace("EXTRA", "")
+SPARQL_REPO_WITH_IMAGE = SPARQL_REPO_BASE.replace("EXTRA", ";\next:    ext:imageUrl {imageUrl}.")
+
+SPARQL_DELETE_INSERT = """
+DELETE {{
+  GRAPH <http://mu.semte.ch/application> {{
+    {{resource}} a ext:Repo; dct:title ?title; dct:description ?description; ext:category ?category.
+  }}
+}} INSERT {{
+  GRAPH <http://mu.semte.ch/application> {{
+    {{resource}} a ext:Repo;
     mu:uuid {uuid};
     dct:title {title};
     dct:description {description};
-    ext:category {category};
-    ext:imageUrl {imageUrl}.
+    ext:category {category}EXTRA.
+}}
+}} WHERE {{
+  GRAPH <http://mu.semte.ch/application> {{
+    {{resource}} a ext:Repo.
+    OPTIONAL {{ {{resource}} dct:title ?title }}
+    OPTIONAL {{ {{resource}} dct:description ?description }}
+    OPTIONAL {{ {{resource}} ext:category ?category }}
+  }}
 }}
 """
 
-REVISION = """
+
+
+SPARQL_REVISION = """
 GRAPH <http://mu.semte.ch/application> {{
     <http://info.mu.semte.ch/repo-revisions/{uuid}> a ext:RepoRevision;
     mu:uuid "{uuid}";
@@ -55,19 +72,23 @@ def clear_all_triples():
 
 
 def add_repos_to_triplestore(repos: List[Repo]):
-    query_string_repos = ""
 
-    query_string_repos += PREFIXES
-    query_string_repos += "\n"
     
-    query_string_repos += "\nINSERT DATA {\n"
+    #query_string_repos += "\nINSERT DATA {\n"
 
-    query_string_revisions = query_string_repos
     
     for repo in repos:
-        format_string = QUERY_WITH_IMAGE if repo.image.url != "" else QUERY_NO_IMAGE
+        query_string_repos = ""
+
+        query_string_repos += PREFIXES
+        query_string_repos += "\n"
+
+        query_string_revisions = query_string_repos
+
+
+        #format_string = SPARQL_REPO_WITH_IMAGE if repo.image.url != "" else SPARQL_REPO_NO_IMAGE
         repo_uuid = generate_uuid()
-        query_string_repos += format_string.format(
+        query_string_repos += SPARQL_DELETE_INSERT.replace("EXTRA", ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else "").format(
             resource=sparql_escape_uri(repo.repo_url),
             uuid=sparql_escape_string(repo_uuid),
             title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
@@ -76,18 +97,20 @@ def add_repos_to_triplestore(repos: List[Repo]):
             #readme=
             imageUrl=sparql_escape_uri(repo.image.url)
         )
+        update(query_string_repos)
         
         for revision in repo.revisions:
-            query_string_revisions += REVISION.format(
+            continue
+            query_string_revisions += SPARQL_REVISION.format(
                 uuid=generate_uuid(),
 
-                imagetag = sparql_escape(revision.image_tag),
-                imageurl = sparql_escape(revision.image_url),
+                imagetag = sparql_escape_string(revision.image_tag),
+                imageurl = sparql_escape_uri(revision.image_url),
 
-                repograph = sparql_escape(f"<http://info.mu.semte.ch/repos/{repo_uuid}>"),
+                repograph = sparql_escape_uri(f"<http://info.mu.semte.ch/repos/{repo_uuid}>"),
 
-                repotag = sparql_escape(revision.repo_tag),
-                repourl = sparql_escape(revision.repo_url),
+                repotag = sparql_escape_string(revision.repo_tag),
+                repourl = sparql_escape_string(revision.repo_url),
 
                 
                 # readme = sparql_escape(revision.readme)
@@ -96,12 +119,13 @@ def add_repos_to_triplestore(repos: List[Repo]):
                 #         .replace("\n", "\\n")
                 
             )
+            update(query_string_revisions)
 
     
-    for query_string in [query_string_repos, query_string_revisions]:
-        query_string += "}\n"
-        log(query_string)
-        update(query_string)
+    #for query_string in [query_string_repos, query_string_revisions]:
+     #   query_string += "}\n"
+      #  log(query_string)
+       # update(query_string)
 
     #print(query)
     #run_sparql(sparql, query_string)
