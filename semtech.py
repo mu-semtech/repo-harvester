@@ -9,25 +9,11 @@ from datetime import datetime
 from helpers import generate_uuid, query, update, log
 from escape_helpers import sparql_escape
 
-class Prefix():
-    def __init__(self, key, url) -> None:
-        self.key = key
-        self.url = url
-    
-    def to_sparql_syntax(self):
-        return f"PREFIX {self.key}: <{self.url}>"
-    
-    def __str__(self) -> str:
-        return self.to_sparql_syntax()
-    
-    def __repr__(self) -> str:
-        return self.to_sparql_syntax()
-
-PREFIXES = [
-    Prefix("mu", "http://mu.semte.ch/vocabularies/core/"),
-    Prefix("ext", "http://mu.semte.ch/vocabularies/ext/"),
-    Prefix("dct", "http://purl.org/dc/terms/")
-]
+PREFIXES = """
+  PREFIX mu: <http://mu.semte.ch/vocabularies/core/">
+  PREFIX ext: <http://mu.semte.ch/vocabularies/ext/">
+  PREFIX dct: <http://purl.org/dc/terms/>
+"""
 
 # TODO fix DRY
 QUERY_NO_IMAGE = """
@@ -80,8 +66,8 @@ def clear_all_triples():
 def add_repos_to_triplestore(repos: List[Repo]):
     query_string_repos = ""
 
-    for prefix in PREFIXES:
-        query_string_repos += prefix.to_sparql_syntax() + "\n"
+    query_string_repos += PREFIXES
+    query_string_repos += "\n"
     
     query_string_repos += "\nINSERT DATA {\n"
 
