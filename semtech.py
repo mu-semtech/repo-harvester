@@ -1,13 +1,8 @@
 from typing import List
-from re import findall, IGNORECASE, MULTILINE, sub
-from Repo import Repo
-from SPARQLWrapper import SPARQLWrapper, POST, DIGEST, BASIC
-from urllib.error import HTTPError
-from uuid import uuid3, NAMESPACE_DNS
-from markupsafe import Markup, escape
-from datetime import datetime
-from helpers import generate_uuid, query, update, log
+from helpers import generate_uuid, update, log
 from escape_helpers import sparql_escape
+from datetime import datetime
+from Repo import Repo
 
 PREFIXES = """
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/">
