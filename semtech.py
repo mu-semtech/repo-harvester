@@ -127,9 +127,9 @@ def add_repos_to_triplestore(repos: List[Repo]):
 
     
     for query_string in [query_string_repos, query_string_revisions]:
-
         query_string += "}\n"
-        query(query_string)
+        log(query_string)
+        update(query_string)
 
     #print(query)
     #run_sparql(sparql, query_string)
