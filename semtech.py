@@ -6,7 +6,7 @@ from urllib.error import HTTPError
 from uuid import uuid3, NAMESPACE_DNS
 from markupsafe import Markup, escape
 from datetime import datetime
-from helpers import generate_uuid, query, update
+from helpers import generate_uuid, query, update, log
 from escape_helpers import sparql_escape
 
 class Prefix():
@@ -72,7 +72,9 @@ GRAPH <http://mu.semte.ch/application> {{
 """
 
 def clear_all_triples():
-    query('DROP SILENT GRAPH <http://mu.semte.ch/application>')
+    log("Refusing to delete all triples")
+    # Don't, this is not only your data you will be destroying
+    # query('DROP SILENT GRAPH <http://mu.semte.ch/application>')
 
 
 def add_repos_to_triplestore(repos: List[Repo]):
