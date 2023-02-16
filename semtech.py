@@ -5,8 +5,8 @@ from datetime import datetime
 from Repo import Repo
 
 PREFIXES = """
-  PREFIX mu: <http://mu.semte.ch/vocabularies/core/">
-  PREFIX ext: <http://mu.semte.ch/vocabularies/ext/">
+  PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+  PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
   PREFIX dct: <http://purl.org/dc/terms/>
 """
 
