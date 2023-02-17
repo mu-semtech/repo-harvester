@@ -27,22 +27,22 @@ SPARQL_REPO_WITH_IMAGE = SPARQL_REPO_BASE.replace("EXTRA", ";\next:    ext:image
 SPARQL_DELETE_INSERT = """
 DELETE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {{resource}} a ext:Repo; dct:title ?title; dct:description ?description; ext:category ?category.
+    {resource} a ext:Repo; dct:title ?title; dct:description ?description; ext:category ?category.
   }}
 }} INSERT {{
   GRAPH <http://mu.semte.ch/application> {{
-    {{resource}} a ext:Repo;
+    {resource} a ext:Repo;
     mu:uuid {uuid};
     dct:title {title};
     dct:description {description};
     ext:category {category}EXTRA.
-}}
+  }}
 }} WHERE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {{resource}} a ext:Repo.
-    OPTIONAL {{ {{resource}} dct:title ?title }}
-    OPTIONAL {{ {{resource}} dct:description ?description }}
-    OPTIONAL {{ {{resource}} ext:category ?category }}
+    {resource} a ext:Repo.
+    OPTIONAL {{ {resource} dct:title ?title }}
+    OPTIONAL {{ {resource} dct:description ?description }}
+    OPTIONAL {{ {resource} ext:category ?category }}
   }}
 }}
 """
@@ -89,7 +89,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
         #format_string = SPARQL_REPO_WITH_IMAGE if repo.image.url != "" else SPARQL_REPO_NO_IMAGE
         repo_uuid = generate_uuid()
         query_string_repos += SPARQL_DELETE_INSERT.replace("EXTRA", ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else "").format(
-            resource=sparql_escape_uri(repo.repo_url),
+            resource=f"<http://info.mu.semte.ch/repos/{repo_uuid}>",
             uuid=sparql_escape_string(repo_uuid),
             title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
             description=sparql_escape_string(repo.description),
@@ -97,6 +97,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
             #readme=
             imageUrl=sparql_escape_uri(repo.image.url)
         )
+        print(query_string_repos)
         update(query_string_repos)
         
         for revision in repo.revisions:
