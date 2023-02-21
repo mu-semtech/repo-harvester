@@ -12,20 +12,6 @@ PREFIXES = """
   PREFIX dct: <http://purl.org/dc/terms/>
 """
 
-# TODO fix DRY
-SPARQL_REPO_BASE = """
-GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:Repo;
-    mu:uuid {uuid};
-    dct:title {title};
-    dct:description {description};
-    ext:category {category}EXTRA.
-}}
-"""
-
-SPARQL_REPO_NO_IMAGE = SPARQL_REPO_BASE.replace("EXTRA", "")
-SPARQL_REPO_WITH_IMAGE = SPARQL_REPO_BASE.replace("EXTRA", ";\next:    ext:imageUrl {imageUrl}.")
-
 SPARQL_DELETE_INSERT = """
 DELETE {{
   GRAPH <http://mu.semte.ch/application> {{
@@ -59,7 +45,7 @@ def replace_to_insert(regex_string):
 SPARQL_REVISION = """
 DELETE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:RepoRevision; ext:revisionImageTag ?imageTag; ext:revisionImageUrl ?imageUrl; ext:revisionRepoTag ?repoTag; ext:revisionRepoUrl ?repoUrl; ext:readme ?readme; ext:hasRepo ?hasRepo.
+    {resource} a ext:RepoRevision; ext:revisionImageTag ?revisionImageTag; ext:revisionImageUrl ?revisionImageUrl; ext:revisionRepoTag ?revisionRepoTag; ext:revisionRepoUrl ?revisionRepoUrl; ext:readme ?readme; ext:hasRepo ?hasRepo.
   }}
 }} INSERT {{
   GRAPH <http://mu.semte.ch/application> {{
@@ -78,8 +64,13 @@ DELETE {{
   }}
 }} WHERE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:RepoRevision;
-    ext:hasRepo {repograph}.
+    {resource} a ext:RepoRevision.
+    OPTIONAL {{ {resource} ext:hasRepo ?hasRepo }}
+    OPTIONAL {{ {resource} ext:revisionRepoTag ?revisionRepoTag }}
+    OPTIONAL {{ {resource} ext:revisionRepoUrl ?revisionRepoUrl }}
+    OPTIONAL {{ {resource} ext:revisionImageTag ?revisionImageTag }}
+    OPTIONAL {{ {resource} ext:revisionImageUrl ?revisionImageUrl }}
+    OPTIONAL {{ {resource} ext:readme ?readme }}
   }}
 }}
 """
@@ -117,9 +108,7 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
         )
 
         if init:
-          print("REIGU")
           query_string_repos = replace_to_insert(query_string_repos)
-          print(query_string_repos)
 
 
         #print(query_string_repos)
@@ -128,9 +117,7 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
         for revision in repo.revisions:
           query_string_revisions = PREFIXES + "\n"
 
-          print(revision)
-
-          revision_uuid = generate_uuid()
+          revision_uuid = str(uuid3(NAMESPACE_DNS, f"{repo.name}-{revision.repo_tag}"))
           query_string_revisions += SPARQL_REVISION.format(
               resource=f"<http://info.mu.semte.ch/repo-revisions/{revision_uuid}>",
               uuid=sparql_escape_string(revision_uuid),

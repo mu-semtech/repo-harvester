@@ -84,7 +84,7 @@ class Repo():
                 .replace("\\", "&bsol;")\
                 .replace('"', "&quot;")\
                 .replace("\n", "\\n")
-        return version
+        return data
     
     def __str__(self) -> str:
         return f"{self.name}@{self.repo_url}"
