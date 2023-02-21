@@ -3,8 +3,9 @@
 Harvest information from repositories and images. Easily extensible to work with multiple Git & Image hosts. Store it all as linked data. 
 
 ## How to
-Prerequisites: Docker, git*
-*if building from source
+Prerequisites: Docker, *git*
+
+(*cursive* if building from source)
 
 ### Use in docker-compose (recommended)
 ```yaml
