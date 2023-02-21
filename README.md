@@ -32,6 +32,21 @@ docker run -p 80:80 repo-harvester
 ```
 
 
+### Development mode
+Thanks to [mu-python-template](https://github.com/mu-semtech/mu-python-template#development-mode), you can mount the following volumes to save cache, as well as enable live-reload.
+```yaml
+version: '3.4'
+
+services:
+  harvester:
+    volumes:
+      - /path/to/repo-harvester/:/app
+      - cache/:/usr/src/app/cache/
+    environment:
+      MODE: "development"
+      LOG_LEVEL: "debug"
+```
+
 ## Reference
 Please also check the docstrings and typing included in the code!
 
