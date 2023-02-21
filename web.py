@@ -8,8 +8,17 @@ from helpers import log
 def index():
     return "Repo harvester online!"
 
+@app.route("/init", methods=["GET", "POST"])
+def init():
+    return add_repos(init=True)
+
+
 @app.route("/update", methods=["GET", "POST"])
 def update():
+    return add_repos(init=False)
+
+
+def add_repos(init=False):
     log("Updating...")
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
     #repos = list_and_parse_repos()
@@ -27,5 +36,5 @@ def update():
 
     clear_all_triples()
 
-    add_repos_to_triplestore(mu_semtech_github.repos)
+    add_repos_to_triplestore(mu_semtech_github.repos, init)
     return "<h1>Repo harvester updated!</h1>"

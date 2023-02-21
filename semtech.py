@@ -3,6 +3,8 @@ from helpers import generate_uuid, update, log
 from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri
 from datetime import datetime
 from Repo import Repo
+from uuid import uuid3, NAMESPACE_DNS
+from re import search, IGNORECASE, MULTILINE
 
 PREFIXES = """
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -47,6 +49,11 @@ DELETE {{
 }}
 """
 
+def replace_to_insert(regex_string):
+  regex = search(r"INSERT(.|\n)*(?=WHERE(\s|{))", regex_string, MULTILINE)
+  insert = PREFIXES + regex.group(0)
+  return insert
+
 
 
 SPARQL_REVISION = """
@@ -71,7 +78,7 @@ def clear_all_triples():
     # query('DROP SILENT GRAPH <http://mu.semte.ch/application>')
 
 
-def add_repos_to_triplestore(repos: List[Repo]):
+def add_repos_to_triplestore(repos: List[Repo], init=False):
 
     
     #query_string_repos += "\nINSERT DATA {\n"
@@ -87,7 +94,7 @@ def add_repos_to_triplestore(repos: List[Repo]):
 
 
         #format_string = SPARQL_REPO_WITH_IMAGE if repo.image.url != "" else SPARQL_REPO_NO_IMAGE
-        repo_uuid = generate_uuid()
+        repo_uuid = str(uuid3(NAMESPACE_DNS, repo.name)) #generate_uuid()
         query_string_repos += SPARQL_DELETE_INSERT.replace("EXTRA", ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else "").format(
             resource=f"<http://info.mu.semte.ch/repos/{repo_uuid}>",
             uuid=sparql_escape_string(repo_uuid),
@@ -97,7 +104,14 @@ def add_repos_to_triplestore(repos: List[Repo]):
             #readme=
             imageUrl=sparql_escape_uri(repo.image.url)
         )
-        print(query_string_repos)
+
+        if init:
+          print("REIGU")
+          query_string_repos = replace_to_insert(query_string_repos)
+          print(query_string_repos)
+
+
+        #print(query_string_repos)
         update(query_string_repos)
         
         for revision in repo.revisions:
