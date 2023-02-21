@@ -12,13 +12,18 @@ class DockerHub(Imagesource):
         for image in images_data:
             self.add_image(image_json=image)
 
+    def url_generator(self, image: Image, version: str=None):
+        return "https://registry.hub.docker.com/r/{0}/{1}/tags".format(
+            self.owner, image.name
+        )
     
     def add_image(self, image_json: dict):
         if image_json["name"] == "login-service":
             return
         image = Image(
             name=image_json["name"],
-            url=self.get_image_url(image_json["name"]))
+            url=self.get_image_url(image_json["name"]),
+            imagesource=self)
 
         tags_array = json(f"https://hub.docker.com/v2/repositories/{self.owner}/{image.name}/tags?page_size=1000", 5)["results"]
         for tag_object in tags_array:

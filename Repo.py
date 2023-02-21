@@ -52,7 +52,7 @@ class Repo():
                 image_tag = next(filter(lambda image_tag: image_tag.lower() == stripped_repo_tag , image.tags))
                 revisions_list.append(Revision(
                     image_tag,
-                    "",
+                    image.imagesource.url_generator(image),
                     repo_tag,
                     self.reposource.url_generator(self, repo_tag),
                     self.readme(False, repo_tag)
