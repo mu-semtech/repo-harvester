@@ -1,5 +1,5 @@
-from reposource.github import GitHub
-from imagesource.dockerhub import DockerHub
+from reposource.GitHub import GitHub
+from imagesource.DockerHub import DockerHub
 from categories import categories, sort_into_category_dict
 from semtech import add_repos_to_triplestore, clear_all_triples
 from helpers import log
