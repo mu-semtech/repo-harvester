@@ -150,6 +150,13 @@ For the model which this service uses, check [the reference in mu-app-info](http
 
 ## Discussions
 ### Categories
+Categories are arbitrary. We've added these because a lot of organisations - mu-semtech included - have a lot of different types of repos. More specifically, repos that are no longer in active use, as well as repos that are closely related to eachother. Categories allow you to categorise your repos in any way you want. See it as an html `data-` tag.
+
+### Revisions
+We've implemented revisions to allow easy traversal through current & past documentation.
+However, there was no set way to define a revision. Using Image tags would be useless, as there are often projects with multiple images per release (alpine vs regular for example). Using GitHub releases would break this projects rule of being platform-independent. Using solely Git Tags could lead to a lack of relevant Image releases.
+
+Thus revisions are found & added by the following logic: if a Git tag has a *corresponding* image tag, it is counted as a revision.
 
 
 ## License

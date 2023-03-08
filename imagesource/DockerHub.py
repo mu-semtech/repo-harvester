@@ -2,6 +2,9 @@ from time import sleep
 from request import json
 from imagesource.Imagesource import Imagesource, Image
 
+"""Defines the DockerHub Reposource subclass. All DockerHub API code should be contained in this file."""
+
+
 class DockerHub(Imagesource):
     def __init__(self, owner: str) -> None:
         super().__init__()
@@ -13,11 +16,13 @@ class DockerHub(Imagesource):
             self.add_image(image_json=image)
 
     def url_generator(self, image: Image, version: str=None):
+        """Override implementation: see Imagesource for more info"""
         return "https://registry.hub.docker.com/r/{0}/{1}/tags".format(
             self.owner, image.name
         )
     
     def add_image(self, image_json: dict):
+        """From a DockerHub API object, create a Repo object and add it to to self.repos"""
         if image_json["name"] == "login-service":
             return
         image = Image(
@@ -32,9 +37,11 @@ class DockerHub(Imagesource):
         self.images.append(image)
     
     def get_image_url(self, image_name=""):
+        """Returns the URL to the image of provided name"""
         return f"https://hub.docker.com/r/{self.owner}/{image_name}"
     
     def get_all_images(self, max_results=100):
-        request = json(f"https://hub.docker.com/v2/repositories/{self.owner}/?page_size={max_results}")
-        return request["results"]
+        """Return all images from this source"""
+        all_images = json(f"https://hub.docker.com/v2/repositories/{self.owner}/?page_size={max_results}")
+        return all_images["results"]
     

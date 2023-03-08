@@ -1,7 +1,14 @@
-from configparser import ConfigParser
+# Native imports
 from re import search, IGNORECASE
-
+from configparser import ConfigParser
+# Relative imports
 from categories import categories
+
+"""
+Code to handle overrides
+- Reads the defined overrides from overrides.conf
+- Exports a function to apply relevant overrides to a Repo object
+"""
 
 config = ConfigParser()
 config.read("overrides.conf")

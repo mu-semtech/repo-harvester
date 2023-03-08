@@ -1,8 +1,17 @@
 from re import search, IGNORECASE
 
+"""
+All code relevant to categories:
+- Category class 
+- The dict defining the categories to be used
+- Any helper functions
+
+For information on what categories are, see the relevant README discussion.
+"""
+
 class Category():
     """
-    The Category a :class:`Repo` belongs to.
+    The Category a Repo belongs to.
     This is an abstract, self definable thing,
     referring to how *you* would like to sort and categorise the repository
     """
@@ -13,10 +22,11 @@ class Category():
     
     @property
     def url(self):
+        """Return a linked data URL for the category"""
         return f"http://mu.semte.ch/vocabularies/ext/category/{self.id}"
     
     def matches_string(self, string: str):
-        """If the category has a regex pattern, check if the provided parameter matches it"""
+        """If the category has a regex pattern, check if the provided string matches it"""
         if self.regex:
             return search(self.regex, string, IGNORECASE)
         else:
@@ -26,8 +36,12 @@ class Category():
         return self.name
 
 
-# Sort by override, then specific regex
-# Regex & category names are based on mu-semtech naming conventions
+"""
+categories defines the categories to use throughout repo-harvester
+
+- Sort by override, then specific regex
+- Regex & category names below are based on mu-semtech naming conventions
+"""
 categories = {
     "templates": Category("Templates", "templates", r".*-template"),
     "microservices": Category("Microservices", "microservices", r".*-service"),
@@ -37,7 +51,8 @@ categories = {
     "tools": Category("Tools", "tools"),
 }
 
-def sort_into_category_dict(repos) -> dict:
+def sort_into_category_dict(repos: list) -> dict:
+    """A function that turns a List[Repo] into a dict[category_id] = List[Repo]"""
     dict_category_repos = {}
     for category_id in categories:
         if category_id == categories["archive"].id:

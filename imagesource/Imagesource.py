@@ -1,12 +1,13 @@
+"""Defines the Imagesource superclass, as well as the Image class"""
+
 class Imagesource():
     """
-    A class that is very similar to Reposource,
-    containg information about the container host
-    (docker hub for example)
+    A class that is very similar to Reposource, containg information about the container image host
+    For example: DockerHub
+
+    self.images should be populated with Image objects
     
-    This will be used by the Reposource class,
-    to be passed to the Repo, so that the Repo
-    can use get_images_for_repo!
+    This will be used by the Reposource class, to be passed to the Repo, so that the Repo can use get_images_for_repo
     """
     def __init__(self) -> None:
         self.images = []
@@ -20,15 +21,14 @@ class Imagesource():
         pass
     
     def get_image_by_name(self, name: str):
+        """From self.images, find the image with the provided name"""
         for image in self.images:
             if image.name.lower() == name.lower():
                 return image
         return Image("", "", self)
 
 class Image():
-    """
-    A Repo can have multiple images, and are attached as so
-    """
+    """Class to contain all Image data. Note that a Repo can have multiple images."""
     def __init__(self, name: str, url: str, imagesource: Imagesource) -> None:
         self.name = name
         self.url = url

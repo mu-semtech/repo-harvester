@@ -1,9 +1,21 @@
+# Native imports
 from typing import Any, List
-from request import json, contents
+# Relative imports
+from request import contents
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
 
+"""
+Classes for repos and repo revisions.
+
+Important factors about these classes:
+- Universal: they are platform agnostic
+- Relevant: as good as all properties in these classes
+            are there because they are to be saved into the triplestore
+"""
+
 class Revision():
+    """This class holds revision data"""
     def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, readme: str) -> None:
         self.image_tag = image_tag
         self.image_url = image_url
@@ -30,7 +42,6 @@ class Repo():
         self.reposource = reposource
 
         self.category = self.reposource.parse_category(category_data)
-        #self.url = json["html_url"]
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
@@ -39,10 +50,12 @@ class Repo():
     
     @property
     def image(self):
+        """Returns Image object for this repository"""
         return self.reposource.imagesource.get_image_by_name(self.imagename)
     
     @property
     def revisions(self) -> List[Revision]:
+        """Returns a list of Revisions for this repository"""
         revisions_list = []
 
         image = self.image
@@ -64,10 +77,11 @@ class Repo():
 
     
     def get_file_url(self, filename, version=None):
+        """When given a filename (and optionally version), return the files' url"""
         return self.reposource.file_url_generator(self, filename, version)
     
     def get_file_contents(self, path, version=None):
-        """Request a file, appending the repo url if needed"""
+        """Request a files contents. Automatically appends the repo url if a relative path is given"""
         if "http" not in path.lower():
             path = self.get_file_url(path, version)
         return contents(path)

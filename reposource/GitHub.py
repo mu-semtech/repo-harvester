@@ -1,14 +1,15 @@
+# Native imports
 from typing import List
+# Relative imports
+from request import json
 from Repo import Repo
 from reposource.Reposource import Reposource
 from imagesource.Imagesource import Imagesource
 from categories import Category, categories
-from request import json
+
+"""Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 
 class GitHub(Reposource):
-    """
-    The GitHub :class:`Reposource`
-    """
     def __init__(self, owner: str, imagesource: Imagesource) -> None:
         super().__init__(imagesource)
         self.owner = owner
@@ -19,6 +20,7 @@ class GitHub(Reposource):
             self.add_repo(repo_data)
         
     def add_repo(self, repo_json):
+        """From a GitHub API object, create a Repo object and add it to to self.repos"""
         repo = Repo(
             name=repo_json["name"],
             description=repo_json["description"],
@@ -38,20 +40,19 @@ class GitHub(Reposource):
         self.repos.append(repo)
     
     def _parse_category(self, repo_other_data) -> Category:
-        """Code to determine the Category from GitHub data"""
+        """Override implementation: see Reposource for more info"""
         if repo_other_data["archived"]:
             return categories["archive"]
         else:
             return None
 
     def get_all_repos(self) -> object:
-        """ Simply requests all the repos of the specified user/organisation from GitHub API,
-        returning the parsed json response
-        """
-        request = json("https://api.github.com/orgs/{}/repos".format(self.owner))
-        return request
+        """ Requests all the repos of the specified user/organisation from GitHub's API, returning the parsed json response"""
+        all_repos = json("https://api.github.com/orgs/{}/repos".format(self.owner))
+        return all_repos
 
     def url_generator(self, repo: Repo, version: str=None):
+        """Override implementation: see Reposource for more info"""
         if version == None:
             version = repo.other_data["default_branch"]
         return "https://github.com/{0}/tree/{1}".format(
@@ -59,6 +60,7 @@ class GitHub(Reposource):
         )
 
     def file_url_generator(self, repo: Repo, filename: str, version: str=None) -> str:
+        """Override implementation: see Reposource for more info"""
         if version == None:
             version = repo.other_data["default_branch"]
         return "https://raw.githubusercontent.com/{0}/{1}/{2}".format(
