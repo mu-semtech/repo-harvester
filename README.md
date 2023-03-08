@@ -1,26 +1,119 @@
 # repo-harvester
 
-Harvest information from repositories and images. Easily extensible to work with multiple Git & Image hosts. Store it all as linked data. 
+Harvest information & documentation from repositories and images. Easily extensible to work with multiple Git & Image hosts. Store it all as linked data. 
 
-## How to
-Prerequisites: Docker, *git*
+## Tutorial (getting started)
+The repo-harvester is built to collect information about mu-semtech repositories, into app-mu-info. This tutorial will show how to get a basic version up and running. It assumes a basic understanding of mu-semtech.
 
-(*cursive* if building from source)
+```yml
+# docker-compose.yml
+version: '3.4'
 
-### Use in docker-compose (recommended)
+services:
+  dispatcher:
+    image: semtech/mu-dispatcher:1.1.2
+    links:
+      - resource:resource
+    volumes:
+      - ./config/dispatcher:/config
+  db:
+    image: redpencil/virtuoso:feature-woodpecker-feature-builds
+    environment:
+      SPARQL_UPDATE: "true"
+      DEFAULT_GRAPH: "http://mu.semte.ch/application"
+    volumes:
+      - ./data/db:/data
+  resource:
+    image: semtech/mu-cl-resources:1.17.1
+    links:
+      - db:database
+    volumes:
+      - ./config/resources:/config
+  harvester:
+    image: repo-harvester
+    ports:
+      - "5000:80"  # Remove this in production
+    links:
+      - db:database
+```
+
+Optionally, you can clone this repository and [enable development mode](#enable-development-mode).
+
+Now all you have to do is run the following commands:
+```bash
+docker-compose up  # Starts the stack
+curl localhost:5000/init  # Populates the database
+curl localhost:5000/update  # Updates the database
+```
+
+And that's it! However, if you wish, you can change the [repo/image sources](#changing-sources) and [categories](#changing-categories) of this app rather easily.
+
+
+## How to's
+Prerequisites: Docker, (git if building from source)
+
+### Use in docker-compose
 ```yaml
 services:
     # ...
     harvester:
         image: semtech/repo-harvester
-        # Below is optional; mainly useful in dev environments
-        ports:
-            - "5000:80"
-        environment:
-            MODE: "development"
-            LOG_LEVEL: "debug"
+        links:
+          - db:database
+    # ...
 ```
+
 For example usage, check out [app-mu-info](https://github.com/mu-semtech/app-mu-info)
+
+### Enable development mode
+Thanks to [mu-python-template](https://github.com/mu-semtech/mu-python-template#development-mode), you can mount the following volumes to save cache, as well as enable live-reload.
+```yaml
+version: '3.4'
+
+services:
+  # ...
+  harvester:
+    # ...
+    volumes:
+      - /path/to/repo-harvester/:/app
+      - cache/:/usr/src/app/cache/
+    ports:
+      - "5000:80"
+    environment:
+      MODE: "development"
+      LOG_LEVEL: "debug"
+```
+
+### Changing sources
+The `add_repos_to_triplestore` function simply takes a List[Repo]. And thanks to the ImageSource & RepoSource subclasses, all you have to do is define the account owner name!
+
+Currently source definition is handled in [web.py](web.py), but it can theoretically be done anywhere. Below is an example of how this can be done with the mu-semtech [GitHub](https://github.com/mu-semtech/) & [DockerHub](https://hub.docker.com/u/semtech):
+```python
+mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
+add_repos_to_triplestore(repos=mu_semtech_github.repos, init=True)
+```
+
+### Changing categories
+For info on what categories are, please see the [discussions section](#categories)
+
+#### categories.py
+Simple add to the following dict in [categories.py](categories.py)
+```python
+categories = {
+    "category-name-for-use-in-code": Category("Human readable name", "id", "optional-regex-.*-to-add-repos-with-matching-names-to-category"),
+}
+```
+The order in which you add them *does* matter. If you add a category with a `.*` regex on the start of the dict, it will subsequently match everything. Make sure to work down from most specific to less specific/catch-all.
+
+#### overrides.conf
+You can configure [overrides.conf](overrides.conf) in case you break your own Category naming convention, or want to archive specific repositories without changing anything in the repository itself.
+The syntax is as follows:
+```conf
+[regex-.*-for-repo-name]
+Category=tools  # Optional, reassigns to the category with specified 
+ImageName=mu-login-service  # Optional, overrides the container image name for this repo
+```
+
 
 
 ### Build & run the image locally
@@ -31,21 +124,6 @@ docker build -t repo-harvester .
 docker run -p 80:80 repo-harvester
 ```
 
-
-### Development mode
-Thanks to [mu-python-template](https://github.com/mu-semtech/mu-python-template#development-mode), you can mount the following volumes to save cache, as well as enable live-reload.
-```yaml
-version: '3.4'
-
-services:
-  harvester:
-    volumes:
-      - /path/to/repo-harvester/:/app
-      - cache/:/usr/src/app/cache/
-    environment:
-      MODE: "development"
-      LOG_LEVEL: "debug"
-```
 
 ## Reference
 Please also check the docstrings and typing included in the code!
@@ -69,14 +147,10 @@ For the model which this service uses, check [the reference in mu-app-info](http
 - [sparql.py](sparql.py): Code that stores collected data into a triplestore through SPARQL.
 - [web.py](web.py): Entrypoint, a Flask app.
 
-### overrides.conf
-You can configure [overrides.conf](overrides.conf) in case you break your own Category naming convention, or want to archive specific repositories without changing the git repository.
-The syntax is as follows:
-```conf
-[regex-.*-for-repo-name]
-Category=tools  # Optional, reassigns to the category with specified 
-ImageName=mu-login-service  # Optional, overrides the container image name for this repo
-```
+
+## Discussions
+### Categories
+
 
 ## License
 This project is licensed under [the MIT License](LICENSE).

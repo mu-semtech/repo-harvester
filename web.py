@@ -1,7 +1,7 @@
 from reposource.GitHub import GitHub
 from imagesource.DockerHub import DockerHub
-from categories import categories, sort_into_category_dict
-from semtech import add_repos_to_triplestore, clear_all_triples
+from categories import sort_into_category_dict
+from sparql import add_repos_to_triplestore, clear_all_triples
 from helpers import log
 
 @app.route("/")
@@ -21,8 +21,9 @@ def update():
 def add_repos(init=False):
     log("Updating...")
     """Get the repos, parse them, sort them by category, export them to build/*.html"""
-    #repos = list_and_parse_repos()
+    repos = []
     mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
+    repos += mu_semtech_github.repos
 
     dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)
 
@@ -34,7 +35,6 @@ def add_repos(init=False):
     log(repo.image)
     log(repo.revisions)
 
-    clear_all_triples()
 
-    add_repos_to_triplestore(mu_semtech_github.repos, init)
+    add_repos_to_triplestore(repos, init)
     return "<h1>Repo harvester updated!</h1>"
