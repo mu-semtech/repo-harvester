@@ -136,7 +136,7 @@ For the model which this service uses, check [the reference in mu-app-info](http
 - [imagesource/](imagesource/): Code to handle image sources (e.g. Docker Hub)
     - [Imagesource.py](imagesource/Imagesource.py): The base class for image sources. This allows the rest of the code to work no matter what source is used.
     - [DockerHub.py](imagesource/DockerHub.py): The class for the Docker Hub image source. All Docker Hub specific code should be in here.
-- [reposource/](reposource/): Code to handle repository soruces (e.g. GitHub, Gitea...)
+- [reposource/](reposource/): Code to handle repository sources (e.g. GitHub, Gitea...)
     - [Reposource.py](reposource/Reposource.py): The base class for repo sources. This allows the reset of the code to work no matter what source is used.
     - [GitHub.py](reposource/GitHub.py): The class for the GitHub repo source. All GitHub specific code should be in here.
 - [categories.py](categories.py): Defines & handles categories to sort the repositories in. These are arbitrary and user-defined.
