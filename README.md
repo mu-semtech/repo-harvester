@@ -83,6 +83,7 @@ services:
       MODE: "development"
       LOG_LEVEL: "debug"
 ```
+Caching is only enabled when MODE is set to development, and will not auto-clear. It is only intended to be used during development.
 
 ### Changing sources
 The `add_repos_to_triplestore` function simply takes a List[Repo]. And thanks to the ImageSource & RepoSource subclasses, all you have to do is define the account owner name!

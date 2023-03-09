@@ -1,5 +1,5 @@
 # Native imports
-from os import makedirs
+from os import makedirs, environ
 from os.path import join, exists
 from json import loads
 from time import sleep
@@ -12,16 +12,19 @@ from slugify import slugify
 Helper functions to handle requests & caching
 """
 
-cache_dir = "cache/"
-makedirs(cache_dir, exist_ok=True)
+CACHE_ENABLED = environ["MODE"] == "development"
 
-def url_to_cachefile_path(url, extension="json") -> str:
+if CACHE_ENABLED:
+    cache_dir = "cache/"
+    makedirs(cache_dir, exist_ok=True)
+
+def _url_to_cachefile_path(url, extension="json") -> str:
     """Create a path from an URL. For use during caching"""
     return join(cache_dir, slugify(url) + "." + extension)
 
-def get_from_cache(url) -> Union[str,False]:
+def _get_from_cache(url) -> Union[str,bool]:
     """Read data from cachefile for specified url. Returns False if not cached"""
-    file = url_to_cachefile_path(url)
+    file = _url_to_cachefile_path(url)
 
     if exists(file):
         with open(file, "r", encoding="UTF-8") as file:
@@ -34,25 +37,26 @@ def get_from_cache(url) -> Union[str,False]:
 def request(url) -> Response:
     """Send a request to the url, and cache the result. Returns requests.Response object"""
     data = get(url)
-    with open(url_to_cachefile_path(url), "w", encoding="UTF-8") as file:
-        file.write(data.text)
+    if CACHE_ENABLED:
+        with open(_url_to_cachefile_path(url), "w", encoding="UTF-8") as file:
+            file.write(data.text)
 
     return data
 
-def contents(url, timeout_if_not_cached=0, json=False) -> any:
+def contents(url, request_timeout=0, json=False) -> any:
     """Get (raw|json) contents from specified url. Will use cache if exists"""
 
-    data = get_from_cache(url)
+    data = _get_from_cache(url) if CACHE_ENABLED else False
     if data:
         return loads(data) if json else data
     else:
         data = request(url)
-        if timeout_if_not_cached > 0:
-            print(f"Timeout passed! Sleeping for {timeout_if_not_cached}")
-            sleep(timeout_if_not_cached)
+        if request_timeout > 0:
+            print(f"Timeout passed! Sleeping for {request_timeout}")
+            sleep(request_timeout)
         return data.json() if json else data.content
             
 
-def json(url, timeout_if_not_cached=0):
+def json(url, request_timeout=0):
     """Call the contents function, but always return parsed json"""
-    return contents(url, timeout_if_not_cached, True)
+    return contents(url, request_timeout, True)
