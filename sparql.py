@@ -19,6 +19,8 @@ PREFIXES = """
   PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
   PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
   PREFIX dct: <http://purl.org/dc/terms/>
+  PREFIX repos: <http://mu.semte.ch/vocabularies/ext/repos/>
+  PREFIX revisions: <http://mu.semte.ch/vocabularies/ext/repo-revisions/>
 """
 
 # SPARQL query to update repos
@@ -88,40 +90,27 @@ def replace_to_insert(regex_string):
 def add_repos_to_triplestore(repos: List[Repo], init=False):
     """When given a List of Repo objects, initialise/update the triplestore"""    
     for repo in repos:
-        query_string_repos = ""
-
-        query_string_repos += PREFIXES
-        query_string_repos += "\n"
-
         repo_uuid = str(uuid3(NAMESPACE_DNS, repo.name)) #generate_uuid()
-        query_string_repos += SPARQL_STRING_REPO.replace("EXTRA", ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else "").format(
-            resource=f"<http://info.mu.semte.ch/repos/{repo_uuid}>",
-            uuid=sparql_escape_string(repo_uuid),
-            title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
-            description=sparql_escape_string(repo.description),
-            category=sparql_escape_uri(repo.category.url),
-            #readme=
-            imageUrl=sparql_escape_uri(repo.image.url)
-        )
-
-        if init:
-          query_string_repos = replace_to_insert(query_string_repos)
-
-        update(query_string_repos)
+      
+        all_revisions = ""
         
         for revision in repo.revisions:
           query_string_revisions = PREFIXES + "\n"
 
           revision_uuid = str(uuid3(NAMESPACE_DNS, f"{repo.name}-{revision.repo_tag}"))
+          revision_resource = f"revisions:{revision_uuid}"
+
+          all_revisions += revision_resource + ", "
+
           query_string_revisions += SPARQL_STRING_REVISION.format(
-              resource=f"<http://info.mu.semte.ch/repo-revisions/{revision_uuid}>",
+              resource=revision_resource,
               uuid=sparql_escape_string(revision_uuid),
               imagetag = sparql_escape_string(revision.image_tag or "None"),
               imageurl = sparql_escape_uri(revision.image_url or "None"),
               repotag = sparql_escape_string(revision.repo_tag or "None"),
               repourl = sparql_escape_uri(revision.repo_url or "None"),
               
-              repograph = sparql_escape_uri(f"http://info.mu.semte.ch/repos/{repo_uuid}"),
+              repograph = f"repos:{repo_uuid}",
 
 
               
@@ -136,6 +125,33 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
             query_string_revisions = replace_to_insert(query_string_revisions)
 
           update(query_string_revisions)
+        
+        all_revisions = all_revisions.rstrip(", ")
+
+        query_string_repos = PREFIXES
+        query_string_repos += "\n"
+
+        extra_args = ""
+        extra_args += ";\n    ext:hasRepo {hasRepo}" if all_revisions != "" else ""
+        extra_args += ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else ""
+
+        query_string_repos += SPARQL_STRING_REPO.replace("EXTRA", extra_args).format(
+            resource=f"repos:{repo_uuid}",
+            uuid=sparql_escape_string(repo_uuid),
+            title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
+            description=sparql_escape_string(repo.description),
+            category=sparql_escape_uri(repo.category.url),
+            hasRepo=all_revisions,
+            #readme=
+            imageUrl=sparql_escape_uri(repo.image.url)
+        )
+
+        if init:
+          query_string_repos = replace_to_insert(query_string_repos)
+        
+        print(query_string_repos)
+        update(query_string_repos)
+
 
     
     #for query_string in [query_string_repos, query_string_revisions]:
