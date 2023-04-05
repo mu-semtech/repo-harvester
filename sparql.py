@@ -92,7 +92,30 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
     for repo in repos:
         repo_uuid = str(uuid3(NAMESPACE_DNS, repo.name)) #generate_uuid()
       
-        all_revisions = ""
+
+        query_string_repos = PREFIXES
+        query_string_repos += "\n"
+
+        extra_args = ""
+        #extra_args += ";\n    ext:hasRepo {hasRepo}" if all_revisions != "" else ""
+        extra_args += ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else ""
+
+        query_string_repos += SPARQL_STRING_REPO.replace("EXTRA", extra_args).format(
+            resource=f"repos:{repo_uuid}",
+            uuid=sparql_escape_string(repo_uuid),
+            title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
+            description=sparql_escape_string(repo.description),
+            category=sparql_escape_uri(repo.category.url),
+            #hasRepo=all_revisions,
+            #readme=
+            imageUrl=sparql_escape_uri(repo.image.url)
+        )
+
+        if init:
+          query_string_repos = replace_to_insert(query_string_repos)
+        
+        print(query_string_repos)
+        update(query_string_repos)
         
         for revision in repo.revisions:
           query_string_revisions = PREFIXES + "\n"
@@ -100,7 +123,7 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
           revision_uuid = str(uuid3(NAMESPACE_DNS, f"{repo.name}-{revision.repo_tag}"))
           revision_resource = f"revisions:{revision_uuid}"
 
-          all_revisions += revision_resource + ", "
+          # all_revisions += revision_resource + ", "
 
           query_string_revisions += SPARQL_STRING_REVISION.format(
               resource=revision_resource,
@@ -126,31 +149,8 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
 
           update(query_string_revisions)
         
-        all_revisions = all_revisions.rstrip(", ")
+        #all_revisions = all_revisions.rstrip(", ")
 
-        query_string_repos = PREFIXES
-        query_string_repos += "\n"
-
-        extra_args = ""
-        extra_args += ";\n    ext:hasRepo {hasRepo}" if all_revisions != "" else ""
-        extra_args += ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else ""
-
-        query_string_repos += SPARQL_STRING_REPO.replace("EXTRA", extra_args).format(
-            resource=f"repos:{repo_uuid}",
-            uuid=sparql_escape_string(repo_uuid),
-            title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
-            description=sparql_escape_string(repo.description),
-            category=sparql_escape_uri(repo.category.url),
-            hasRepo=all_revisions,
-            #readme=
-            imageUrl=sparql_escape_uri(repo.image.url)
-        )
-
-        if init:
-          query_string_repos = replace_to_insert(query_string_repos)
-        
-        print(query_string_repos)
-        update(query_string_repos)
 
 
     
