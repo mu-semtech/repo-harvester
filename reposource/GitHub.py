@@ -34,7 +34,10 @@ class GitHub(Reposource):
         )
 
         print(f"Fetching tags for {repo.name}")
-        tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5).results
+        tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5)
+        if type(tag_array) is not list:
+            tag_array = tag_array.results
+
         for tag_object in tag_array:
             repo.tags.append(tag_object["name"])
             #repo.tags.append(Tag(tag_object["name"], tag_object["commit"]))

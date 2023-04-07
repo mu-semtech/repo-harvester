@@ -58,20 +58,35 @@ class Repo():
         """Returns a list of Revisions for this repository"""
         revisions_list = []
 
-        image = self.image
-        for repo_tag in self.tags:
-            try:
-                stripped_repo_tag = repo_tag.lstrip("v").lstrip("V").lower()
-                image_tag = next(filter(lambda image_tag: image_tag.lower() == stripped_repo_tag , image.tags))
-                revisions_list.append(Revision(
-                    image_tag,
-                    image.imagesource.url_generator(image),
-                    repo_tag,
-                    self.reposource.url_generator(self, repo_tag),
-                    self.readme(False, repo_tag)
-                ))
-            except StopIteration:
-                pass  # image_tag not found, pass
+        has_tags = len(self.tags) > 0
+        has_images = len(self.image.tags) > 0
+        
+        if has_tags:
+            image = self.image
+            for repo_tag in self.tags:
+                try:
+                    if has_images:
+                        stripped_repo_tag = repo_tag.lstrip("v").lstrip("V").lower()
+                        image_tag = next(filter(lambda image_tag: image_tag.lower() == stripped_repo_tag , image.tags))
+
+                    revisions_list.append(Revision(
+                        image_tag if has_images else None,
+                        image.imagesource.url_generator(image) if has_images else None,
+                        repo_tag,
+                        self.reposource.url_generator(self, repo_tag),
+                        self.readme(False, repo_tag)
+                    ))
+                except StopIteration:
+                    pass  # image_tag not found, pass
+        else:
+            revisions_list.append(Revision(
+                None,
+                None,
+                self.name,
+                self.reposource.url_generator(self),
+                self.readme(False)
+            ))
+                
         print("Revisions: " + str(revisions_list))
         return revisions_list
 
