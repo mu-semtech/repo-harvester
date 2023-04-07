@@ -6,6 +6,7 @@ from Repo import Repo
 from reposource.Reposource import Reposource
 from imagesource.Imagesource import Imagesource
 from categories import Category, categories
+from helpers import log
 
 """Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 
@@ -31,7 +32,7 @@ class GitHub(Reposource):
             other_data=repo_json
         )
 
-        print(f"Fetching tags for {repo.name}")
+        log(f"Fetching tags for {repo.name}")
         tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5) 
         for tag_object in tag_array:
             repo.tags.append(tag_object["name"])

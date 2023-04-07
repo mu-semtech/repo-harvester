@@ -7,6 +7,7 @@ from typing import Union
 # Package imports
 from requests import get, Response
 from slugify import slugify
+from helpers import log
 
 """
 Helper functions to handle requests & caching
@@ -52,7 +53,7 @@ def contents(url, request_timeout=0, json=False) -> any:
     else:
         data = request(url)
         if request_timeout > 0:
-            print(f"Timeout passed! Sleeping for {request_timeout}")
+            log(f"Timeout passed! Sleeping for {request_timeout}")
             sleep(request_timeout)
         return data.json() if json else data.content
             

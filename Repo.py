@@ -4,6 +4,7 @@ from typing import Any, List
 from request import contents
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
+from helpers import log
 
 """
 Classes for repos and repo revisions.
@@ -47,6 +48,8 @@ class Repo():
         self.other_data = other_data
 
         self = override_repo_values(self)
+
+        log(f"Parsed {self}!")
     
     @property
     def image(self):
@@ -72,7 +75,7 @@ class Repo():
                 ))
             except StopIteration:
                 pass  # image_tag not found, pass
-        print("Revisions: " + str(revisions_list))
+        log("Revisions: " + str(revisions_list))
         return revisions_list
 
     

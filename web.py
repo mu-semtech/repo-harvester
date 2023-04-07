@@ -1,8 +1,14 @@
+# Native imports
+from time import perf_counter, sleep
+# Relative imports
 from reposource.GitHub import GitHub
 from imagesource.DockerHub import DockerHub
 from categories import sort_into_category_dict
 from sparql import add_repos_to_triplestore
+# Package imports
 from helpers import log
+from info import info, response
+from flask import stream_with_context, Response
 
 """
 Entrypoint for the repo-harvester:
@@ -32,21 +38,24 @@ def update():
 
 def add_repos(init=False):
     """Initialise/update the database with repo & image information"""
+
+    start_time = perf_counter()
+    info("Adding repos to the database...")
+    info(f"Running add_repos. init: {init}...")
     
-    log("Updating...")
     repos = []
 
     mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
     repos += mu_semtech_github.repos
-
-    # Testing stuff
-    #dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)
-    #repo = mu_semtech_github.repos[8]
-    #log(repo)
-    #log(repo.description)
-    #log(repo.image)
-    #log(repo.revisions)
-
+    info("mu_semtech github added to repos")
 
     add_repos_to_triplestore(repos, init)
-    return "<h1>Repo harvester updated!</h1>"
+
+    time_elapsed = perf_counter() - start_time
+    info(f"Done! time_elapsed: {time_elapsed}s")
+    
+    info(f"<h1>Repo harvester updated!</h1>")
+
+    return response()
+
+    

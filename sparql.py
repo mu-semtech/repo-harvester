@@ -114,7 +114,6 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
         if init:
           query_string_repos = replace_to_insert(query_string_repos)
         
-        print(query_string_repos)
         update(query_string_repos)
         
         for revision in repo.revisions:
