@@ -6,6 +6,8 @@ from Repo import Repo
 from reposource.Reposource import Reposource
 from imagesource.Imagesource import Imagesource
 from categories import Category, categories
+# Package imports
+from helpers import log
 
 """Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 
@@ -32,7 +34,7 @@ class GitHub(Reposource):
         )
 
         print(f"Fetching tags for {repo.name}")
-        tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5) 
+        tag_array = json(f"https://api.github.com/repos/{self.owner}/{repo.name}/tags", 5).results
         for tag_object in tag_array:
             repo.tags.append(tag_object["name"])
             #repo.tags.append(Tag(tag_object["name"], tag_object["commit"]))
@@ -48,7 +50,20 @@ class GitHub(Reposource):
 
     def get_all_repos(self) -> object:
         """ Requests all the repos of the specified user/organisation from GitHub's API, returning the parsed json response"""
-        all_repos = json("https://api.github.com/orgs/{}/repos".format(self.owner))
+        page_size = 100
+        result_count = page_size
+        page = 1
+        all_repos = []
+        # If this is true, the max amount got returned, thus there is possible more in the next page
+        while result_count == page_size:
+            data = json(f"https://api.github.com/orgs/{self.owner}/repos?per_page={page_size}&page={page}")
+            result_count = len(data)
+
+            if result_count > 0:
+                all_repos += data
+            page += 1
+
+
         return all_repos
 
     def url_generator(self, repo: Repo, version: str=None):
