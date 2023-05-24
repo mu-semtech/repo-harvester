@@ -4,7 +4,8 @@ from typing import Any, List
 from request import contents
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
-
+from divio_docs_gen.markdown_parser import split_sections_from_markdown
+from helpers import log 
 """
 Classes for repos and repo revisions.
 
@@ -15,13 +16,43 @@ Important factors about these classes:
 """
 
 class Revision():
-    """This class holds revision data"""
+    """
+    This class holds revision data
+    
+    This should be kept in line with app-mu-info/"""
     def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, readme: str) -> None:
         self.image_tag = image_tag
         self.image_url = image_url
         self.repo_tag = repo_tag
         self.repo_url = repo_url
-        self.readme = readme
+        self.readme = str(readme)
+
+    def get_sections(self, section_name = None):
+        sections = split_sections_from_markdown(self.readme)
+        if not section_name:
+            return sections
+        else:
+            if section_name in sections:
+                return sections[section_name]
+            else:
+                return None
+
+    @property
+    def tutorials(self):
+        return self.get_sections("tutorials")
+    
+    @property
+    def how_to_guides(self):
+        return self.get_sections("how_to_guides")
+    
+    @property
+    def explanation(self):
+        return self.get_sections("explanation")
+    
+    @property
+    def reference(self):
+        return self.get_sections("reference")
+    
 
 
 class Repo():

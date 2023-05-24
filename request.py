@@ -54,7 +54,7 @@ def contents(url, request_timeout=0, json=False) -> any:
         if request_timeout > 0:
             print(f"Timeout passed! Sleeping for {request_timeout}")
             sleep(request_timeout)
-        return data.json() if json else data.content
+        return data.json() if json else data.text
             
 
 def json(url, request_timeout=0):

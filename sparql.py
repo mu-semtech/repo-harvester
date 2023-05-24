@@ -65,6 +65,10 @@ DELETE {{
     ext:revisionRepoUrl {repourl};
     
     ext:readme {readme};
+    ext:tutorials {tutorials};
+    ext:howToGuides {how_to_guides};
+    ext:explanation {explanation};
+    ext:reference {reference};
     
     ext:hasRepo {repograph}.
   }}
@@ -137,7 +141,11 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
 
 
               
-              readme = sparql_escape_string(revision.readme)
+              readme = sparql_escape_string(revision.readme),
+              tutorials = sparql_escape_string(revision.tutorials),
+              how_to_guides = sparql_escape_string(revision.how_to_guides),
+              explanation = sparql_escape_string(revision.explanation),
+              reference = sparql_escape_string(revision.reference),
               #         .replace("\\", "&bsol;")
               #         .replace('"', "&quot;")
               #         .replace("\n", "\\n")
