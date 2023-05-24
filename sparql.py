@@ -51,7 +51,7 @@ DELETE {{
 SPARQL_STRING_REVISION = """
 DELETE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:RepoRevision; ext:revisionImageTag ?revisionImageTag; ext:revisionImageUrl ?revisionImageUrl; ext:revisionRepoTag ?revisionRepoTag; ext:revisionRepoUrl ?revisionRepoUrl; ext:readme ?readme; ext:hasRepo ?hasRepo.
+    {resource} a ext:RepoRevision; ext:revisionImageTag ?revisionImageTag; ext:revisionImageUrl ?revisionImageUrl; ext:revisionRepoTag ?revisionRepoTag; ext:revisionRepoUrl ?revisionRepoUrl; ext:readme ?readme; ext:tutorials ?tutorials; ext:howToGuides ?howToGuides; ext:explanation ?explanation; ext:reference ?reference; ext:hasRepo ?hasRepo.
   }}
 }} INSERT {{
   GRAPH <http://mu.semte.ch/application> {{
@@ -80,7 +80,10 @@ DELETE {{
     OPTIONAL {{ {resource} ext:revisionRepoUrl ?revisionRepoUrl }}
     OPTIONAL {{ {resource} ext:revisionImageTag ?revisionImageTag }}
     OPTIONAL {{ {resource} ext:revisionImageUrl ?revisionImageUrl }}
-    OPTIONAL {{ {resource} ext:readme ?readme }}
+    OPTIONAL {{ {resource} ext:tutorials ?tutorials }}
+    OPTIONAL {{ {resource} ext:how_to_guides ?how_to_guides }}
+    OPTIONAL {{ {resource} ext:explanation ?explanation }}
+    OPTIONAL {{ {resource} ext:reference ?reference }}
   }}
 }}
 """
@@ -118,7 +121,6 @@ def add_repos_to_triplestore(repos: List[Repo], init=False):
         if init:
           query_string_repos = replace_to_insert(query_string_repos)
         
-        print(query_string_repos)
         update(query_string_repos)
         
         for revision in repo.revisions:

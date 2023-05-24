@@ -4,7 +4,7 @@ from typing import Any, List
 from request import contents
 from reposource.Reposource import Reposource
 from overrides import override_repo_values
-from divio_docs_gen.markdown_parser import split_sections_from_markdown
+from divio_docs_gen.markdown_parser import split_sections_from_markdown, ParsedSections
 from helpers import log 
 """
 Classes for repos and repo revisions.
@@ -27,31 +27,24 @@ class Revision():
         self.repo_url = repo_url
         self.readme = str(readme)
 
-    def get_sections(self, section_name = None):
-        sections = split_sections_from_markdown(self.readme)
-        if not section_name:
-            return sections
-        else:
-            if section_name in sections:
-                return sections[section_name]
-            else:
-                return None
+    def get_sections(self) -> ParsedSections:
+        return split_sections_from_markdown(self.readme)
 
     @property
     def tutorials(self):
-        return self.get_sections("tutorials")
+        return self.get_sections().tutorials
     
     @property
     def how_to_guides(self):
-        return self.get_sections("how_to_guides")
+        return self.get_sections().how_to_guides
     
     @property
     def explanation(self):
-        return self.get_sections("explanation")
+        return self.get_sections().explanation
     
     @property
     def reference(self):
-        return self.get_sections("reference")
+        return self.get_sections().reference
     
 
 
