@@ -85,29 +85,44 @@ services:
 ```
 Caching is only enabled when MODE is set to development, and will not auto-clear. It is only intended to be used during development.
 
-### Changing sources
-The `add_repos_to_triplestore` function simply takes a List[Repo]. And thanks to the ImageSource & RepoSource subclasses, all you have to do is define the account owner name!
+### Configuration through config/*.conf
+For all of these files, an example is provided in the [config/](config/) folder. You can apply them by simply removing `.example` from the filename.
 
-Currently source definition is handled in [web.py](web.py), but it can theoretically be done anywhere. Below is an example of how this can be done with the mu-semtech [GitHub](https://github.com/mu-semtech/) & [DockerHub](https://hub.docker.com/u/semtech):
-```python
-mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
-add_repos_to_triplestore(repos=mu_semtech_github.repos, init=True)
+They can also be loaded in through docker-compose. See [app-mu-info/docker-compose.yml](https://github.com/mu-semtech/app-mu-info/blob/master/docker-compose.yml) for an example.
+
+#### repos.conf
+```conf
+[mu-semtech GitHub + DockerHub]  # Section name, arbitrary
+repos_host=GitHub  # Host on which the repos are hosted. Case-insensitive
+repos_username=mu-semtech  # Username/org name on the repos' host
+images_host=DockerHub  # Host on which the repos' relevant iamges are hosted. Case-insensitive
+images_username=semtech  # Username/org name on the images' host
 ```
 
-### Changing categories
+Currently supported hosts are:
+| name/id     | type          | Link to code                                          | notes       |    
+| ----------- | ------------- | ----------------------------------------------------- | ----------- |
+| GitHub      | Repositories  | [reposource/GitHub.py](reposource/GitHub.py)          | Default     |
+| DockerHub   | Images        | [imagesource/DockerHub.py](imagesource/DockerHub.py)  | Default     |
+
+
+
+#### categories.conf
 For info on what categories are, please see the [discussions section](#categories)
 
-#### categories.py
-Simple add to the following dict in [categories.py](categories.py)
-```python
-categories = {
-    "category-name-for-use-in-code": Category("Human readable name", "id", "optional-regex-.*-to-add-repos-with-matching-names-to-category"),
-}
+Categories are defined as follows:
+```conf
+[templates]  # Section name, arbitrary
+name=Templates  # Human readable name
+id=templates  # id, will be used to generate a linked data url
+regex=.*-template  # regex which will be ran against the repository name to check whether it's part of the category
 ```
-The order in which you add them *does* matter. If you add a category with a `.*` regex on the start of the dict, it will subsequently match everything. Make sure to work down from most specific to less specific/catch-all.
+
+
+The order in which you add them *does* matter. If you add a category with a `.*` regex on the top of the file, it will subsequently match everything. Make sure to work down from most specific to less specific/catch-all.
 
 #### overrides.conf
-You can configure [overrides.conf](overrides.conf) in case you break your own Category naming convention, or want to archive specific repositories without changing anything in the repository itself.
+You can configure [overrides.conf](config/overrides.conf) in case you break your own Category naming convention, or want to archive specific repositories without changing anything in the repository itself.
 The syntax is as follows:
 ```conf
 [regex-.*-for-repo-name]
