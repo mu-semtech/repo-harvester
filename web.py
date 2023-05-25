@@ -1,3 +1,4 @@
+from conf import read_config
 from reposource.GitHub import GitHub
 from imagesource.DockerHub import DockerHub
 from categories import sort_into_category_dict
@@ -36,8 +37,28 @@ def add_repos(init=False):
     log("Updating...")
     repos = []
 
-    mu_semtech_github = GitHub(owner="mu-semtech", imagesource=DockerHub(owner="semtech"))
-    repos += mu_semtech_github.repos
+    config = read_config("repos")
+    for section_name in config.sections():
+        section = config[section_name]
+        
+
+        images_username = section.get("images_username")
+        repos_username = section.get("repos_username")
+        
+        # Get Imagesource first, because it has to be added to Reposource
+        if section.get("images_host").lower() == "dockerhub":
+            imagesource = DockerHub(images_username)
+        else:
+            imagesource = DockerHub(images_username)
+
+        if section.get("repos_host").lower() == "github":
+            reposource = GitHub(repos_username, imagesource)
+        else:
+            reposource = GitHub(repos_username, imagesource)
+        
+        repos += reposource.repos
+    
+    log(repos)
 
     # Testing stuff
     #dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)
@@ -46,7 +67,6 @@ def add_repos(init=False):
     #log(repo.description)
     #log(repo.image)
     #log(repo.revisions)
-
 
     add_repos_to_triplestore(repos, init)
     return "<h1>Repo harvester updated!</h1>"

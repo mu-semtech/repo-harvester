@@ -1,5 +1,6 @@
 from re import search, IGNORECASE
-
+from conf import read_config
+from helpers import log
 """
 All code relevant to categories:
 - Category class 
@@ -33,7 +34,10 @@ class Category():
             return None
     
     def __str__(self) -> str:
-        return self.name
+        return f"{self.id}:{self.name} - {self.regex}" 
+    
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 """
@@ -42,14 +46,19 @@ categories defines the categories to use throughout repo-harvester
 - Sort by override, then specific regex
 - Regex & category names below are based on mu-semtech naming conventions
 """
-categories = {
-    "templates": Category("Templates", "templates", r".*-template"),
-    "microservices": Category("Microservices", "microservices", r".*-service"),
-    "ember-addons": Category("Ember Addons", "ember-addons", r"ember-.*"),
-    "core": Category("Core", "core", r"mu-.*"),
-    "archive": Category("Archive", "archive"),  # Ignored
-    "tools": Category("Tools", "tools"),
-}
+categories = {}
+
+config = read_config("categories")
+
+for section_name in config.sections():
+    section = config[section_name]
+    category = Category(section.get("name"), section.get("id"))
+    if "regex" in section:
+        category.regex = section["regex"]
+    
+    categories[section_name] = category
+
+log(categories)
 
 def sort_into_category_dict(repos: list) -> dict:
     """A function that turns a List[Repo] into a dict[category_id] = List[Repo]"""

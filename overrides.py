@@ -1,8 +1,7 @@
 # Native imports
 from re import search, IGNORECASE
-from configparser import ConfigParser
-from pathlib import Path
 # Relative imports
+from conf import read_config
 from categories import categories
 # Package imports
 from helpers import log
@@ -13,9 +12,7 @@ Code to handle overrides
 - Exports a function to apply relevant overrides to a Repo object
 """
 
-config = ConfigParser()
-config.read(Path(__file__).parent.joinpath("overrides.conf"))
-
+config = read_config("overrides")
 
 def override_repo_values(repo: object):
     try: 
