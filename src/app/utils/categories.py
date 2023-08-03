@@ -19,8 +19,6 @@ for section_name in config.sections():
     
     categories[section_name] = category
 
-log(categories)
-
 def sort_into_category_dict(repos: list) -> dict:
     """A function that turns a List[Repo] into a dict[category_id] = List[Repo]"""
     dict_category_repos = {}

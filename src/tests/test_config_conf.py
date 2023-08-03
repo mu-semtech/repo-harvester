@@ -2,6 +2,7 @@ import unittest
 
 from os import remove, path
 from ..app.config.conf import read_config, CONFIG_PATH
+from .helpers import test_file_at
 #from ..app.config.overrides import override_repo_values
 
 parameter_value = "Value"
@@ -11,14 +12,10 @@ Parameter={parameter_value}
 """
 test_conf_path = path.abspath("test.conf")
 
-def test_file_at(path):
-    with open(path, "w") as file:
-        file.write(test_conf_content)
-
 class TestConfig(unittest.TestCase):
 
     def setUp(self) -> None:
-        test_file_at(test_conf_path)
+        test_file_at(test_conf_path, test_conf_content)
 
     def tearDown(self) -> None:
         remove(test_conf_path)
@@ -33,7 +30,7 @@ class TestConfig(unittest.TestCase):
         filename = "test"
         path = CONFIG_PATH.joinpath(filename + ".conf")
 
-        test_file_at(path)
+        test_file_at(path, test_conf_content)
         
         config = read_config("test")
         self.assertEqual(config.get("Configuration", "Parameter"), parameter_value)
@@ -44,7 +41,7 @@ class TestConfig(unittest.TestCase):
         filename = "test"
         path = CONFIG_PATH.joinpath(filename + ".conf")
 
-        test_file_at(path)
+        test_file_at(path, test_conf_content)
 
         config = read_config("test.conf")
         self.assertEqual(config.get("Configuration", "Parameter"), parameter_value)
