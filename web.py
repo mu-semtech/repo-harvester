@@ -1,8 +1,8 @@
-from conf import read_config
-from reposource.GitHub import GitHub
-from imagesource.DockerHub import DockerHub
-from categories import sort_into_category_dict
-from sparql import add_repos_to_triplestore
+from app.config.conf import read_config
+from app.reposource.GitHub import GitHub
+from app.imagesource.DockerHub import DockerHub
+from app.Category import sort_into_category_dict
+from app.sparql import add_repos_to_triplestore
 from helpers import log
 
 """

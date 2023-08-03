@@ -1,8 +1,8 @@
 # Native imports
 from re import search, IGNORECASE
 # Relative imports
-from conf import read_config
-from categories import categories
+from .conf import read_config
+from ..Category import categories
 # Package imports
 from helpers import log
 

@@ -1,11 +1,11 @@
 # Native imports
 from typing import List
 # Relative imports
-from request import json
-from Repo import Repo
-from reposource.Reposource import Reposource
-from imagesource.Imagesource import Imagesource
-from categories import Category, categories
+from ..utils.request import json
+from ..Repo import Repo
+from .Reposource import Reposource
+from ..imagesource.Imagesource import Imagesource
+from ..Category import Category, categories
 # Package imports
 from helpers import log
 

@@ -1,8 +1,8 @@
 # Native imports
 from typing import Union, Any
 # Relative imports
-from categories import categories, Category
-from imagesource.Imagesource import Imagesource
+from ..Category import categories, Category
+from ..imagesource.Imagesource import Imagesource
 
 """Defines the Reposource superclass"""
 

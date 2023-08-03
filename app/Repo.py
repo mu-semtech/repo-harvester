@@ -1,9 +1,9 @@
 # Native imports
 from typing import Any, List
 # Relative imports
-from request import contents
-from reposource.Reposource import Reposource
-from overrides import override_repo_values
+from .utils.request import contents
+from .reposource.Reposource import Reposource
+from .config.overrides import override_repo_values
 from divio_docs_gen.markdown_parser import split_sections_from_markdown, ParsedSections
 from helpers import log 
 """

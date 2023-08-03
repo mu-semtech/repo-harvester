@@ -3,7 +3,7 @@ from re import search, MULTILINE
 from typing import List
 from uuid import uuid3, NAMESPACE_DNS
 # Relative imports
-from Repo import Repo
+from .Repo import Repo
 # mu-python-template imports
 from helpers import generate_uuid, update, log
 from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri

@@ -1,6 +1,6 @@
 from time import sleep
-from request import json
-from imagesource.Imagesource import Imagesource, Image
+from ..utils.request import json
+from .Imagesource import Imagesource, Image
 
 """Defines the DockerHub Reposource subclass. All DockerHub API code should be contained in this file."""
 

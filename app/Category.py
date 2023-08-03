@@ -1,5 +1,5 @@
 from re import search, IGNORECASE
-from conf import read_config
+from .config.conf import read_config
 from helpers import log
 """
 All code relevant to categories:
