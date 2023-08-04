@@ -1,9 +1,9 @@
 import unittest
 
 from os import remove, path
-from ..app.Category import Category
-from ..app.utils.categories import _load_categories_from_config
-from .helpers import test_file_at
+from ...app.Category import Category
+from ...app.utils.categories import _load_categories_from_config
+from ..helpers import test_file_at
 
 test_file_path = "test.conf"
 test_file_content = """

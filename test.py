@@ -2,10 +2,10 @@ import unittest
 
 from src.tests.test_repo import TestRepoClass
 
-from src.tests.test_config_conf import TestConfig
-from src.tests.test_config_override import TestConfigOverride
+from src.tests.config.test_conf import TestConfig
+from src.tests.config.test_override import TestConfigOverride
 
-from src.tests.test_utils_categories import TestUtilsCategories
+from src.tests.utils.test_categories import TestUtilsCategories
 from src.tests.utils.test_request import TestUtilsRequest
 
 from src.tests.imagesource.t_imgsrc_class import TestImagesourceClass

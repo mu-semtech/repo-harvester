@@ -2,9 +2,9 @@ import unittest
 
 from os import remove, path
 #from ..app.config.conf import read_config, CONFIG_PATH
-from .helpers import test_file_at
-from ..app.config.overrides import override_repo_values
-from ..app.Category import Category
+from ..helpers import test_file_at
+from ...app.config.overrides import override_repo_values
+from ...app.Category import Category
 
 before_change = "before-change"
 after_change = "after-change"
