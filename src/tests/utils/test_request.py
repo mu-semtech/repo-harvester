@@ -1,7 +1,7 @@
 import unittest
 
-from os import remove, path
-from ...app.utils.request import _url_to_cachefile_path, TMP_REPOHARVESTER, _get_from_cache, request, contents, json
+from os import remove, path, environ
+from ...app.utils.request import clear_cache, _url_to_cachefile_path, TMP_REPOHARVESTER, _get_from_cache, request, contents, json
 from ..helpers import test_file_at
 
 
@@ -11,12 +11,12 @@ test_url_expected_output_path = TMP_REPOHARVESTER + "https-hub-docker-com-alpine
 class TestUtilsRequest(unittest.TestCase):
 
     def setUp(self) -> None:
-        pass
-        #test_file_at(test_file_path, test_file_content)
+        clear_cache()
+        environ["RH_CACHE"] = ""
 
     def tearDown(self) -> None:
+        environ["RH_CACHE"] = ""
         pass
-        #remove(test_file_path)
 
     
     def test_url_to_cachefile_path(self):
@@ -29,13 +29,38 @@ class TestUtilsRequest(unittest.TestCase):
         self.assertEqual(generated_path, custom_path)
     
     def test_get_from_cache(self):
-        test_file_at(test_url_expected_output_path, "TEST-CONTENT")
-
+        # No parameters
+        test_file_at(test_url_expected_output_path, "TEST-1")
         self.assertEqual(
             _get_from_cache(test_url),
-            "TEST-CONTENT")
+            "TEST-1")
+        
+        # With extension
+        test_file_at(test_url_expected_output_path.replace(".json", ".txt"), "TEST-2")
+        self.assertEqual(
+            _get_from_cache(test_url, extension="txt"),
+            "TEST-2")
+        
+        # With extension and custom cache path
+        custom_cache = "/tmp/repo-harvester2/"
+        custom_test_url_expected_output_path = test_url_expected_output_path.replace("repo-harvester", "repo-harvester2").replace(".json", ".txt")
+        test_file_at(custom_test_url_expected_output_path, "TEST-3")
 
-        remove(test_url_expected_output_path)
+        self.assertEqual(
+            _get_from_cache(test_url, extension="txt", cache_path=custom_cache),
+            "TEST-3")
+
+        clear_cache(custom_cache)
+        
+        
+
+
+        # With cache_path
+
+
+    
+    def test_get_from_cache_non_existant(self):
+        self.assertFalse(_get_from_cache(test_url))
 
     
     def test_request(self):
@@ -44,7 +69,7 @@ class TestUtilsRequest(unittest.TestCase):
         self.assertTrue(content.endswith("</html>"))
     
     def test_request_cache(self):
-        request(test_url, True)
+        request(test_url, cache=True)
         
         self.assertTrue(path.exists(test_url_expected_output_path))
 
@@ -66,6 +91,10 @@ class TestUtilsRequest(unittest.TestCase):
         data = json(json_path)
         self.assertEqual(data["name"], "open-source-guide")
 
+    def test_env_var_cache(self):
+        return
+        self.assertTrue()
+        
 
 if __name__ == "__main__":
     unittest.main()
