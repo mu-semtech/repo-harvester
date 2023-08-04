@@ -6,15 +6,22 @@ from src.tests.test_utils_categories import TestUtilsCategories
 from src.tests.utils.test_request import TestUtilsRequest
 from src.tests.imagesource.t_imgsrc_class import TestImagesourceClass
 from src.tests.imagesource.t_imgsrc_dockerhub import TestImagesourceDockerHub
+from src.tests.reposource.t_reposrc_class import TestReposourceClass
+
 
 if __name__ == "__main__":
     suites = []
     for suite in [
         TestConfig,
         TestConfigOverride,
+
         TestUtilsCategories,
+        TestUtilsRequest,
+
         TestImagesourceClass,
-        TestImagesourceDockerHub
+        TestImagesourceDockerHub,
+
+        TestReposourceClass
     ]:
         suites.append(unittest.makeSuite(suite))
 
