@@ -15,7 +15,7 @@ Helper functions to handle requests & caching
 
 TMP_REPOHARVESTER = "/tmp/repo-harvester/"
 def env_var_rh_cache_is_true() -> bool:
-    bool(environ.get("RH_CACHE"))
+    return bool(environ.get("RH_CACHE"))
 
 def create_cache(cache_path=TMP_REPOHARVESTER):
     makedirs(cache_path, exist_ok=True)

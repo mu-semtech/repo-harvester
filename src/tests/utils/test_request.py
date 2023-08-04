@@ -15,11 +15,9 @@ custom_test_url_expected_output_path = test_url_expected_output_path.replace("re
 class TestUtilsRequest(unittest.TestCase):
 
     def setUp(self) -> None:
-        clear_cache()
         clear_cache(custom_cache)
 
     def tearDown(self) -> None:
-        clear_cache()
         clear_cache(custom_cache)
     
     # url_to_cachefile()
@@ -39,6 +37,7 @@ class TestUtilsRequest(unittest.TestCase):
         self.assertEqual(
             _get_from_cache(test_url),
             "TEST-1")
+        remove(test_url_expected_output_path)
         
     def test_get_from_cache_non_existant(self):
         self.assertFalse(_get_from_cache(test_url))
@@ -69,6 +68,8 @@ class TestUtilsRequest(unittest.TestCase):
 
         self.assertTrue(content.startswith("<!DOCTYPE html>"))
         self.assertTrue(content.endswith("</html>"))
+
+        remove(test_url_expected_output_path)
     
     def test_request_param_cache_and_cache_path(self):
         request(test_url, cache=True, cache_path=custom_cache)
@@ -83,7 +84,7 @@ class TestUtilsRequest(unittest.TestCase):
 
     # contents()
     def test_contents(self):
-        content = contents(test_url)
+        content = contents(test_url, cache=False)
 
         self.assertTrue(content.startswith("<!DOCTYPE html>"))
         self.assertTrue(content.endswith("</html>"))
@@ -91,7 +92,7 @@ class TestUtilsRequest(unittest.TestCase):
     # json()
     def test_json(self):
         json_path = "https://raw.githubusercontent.com/github/opensource.guide/main/package.json"
-        data = json(json_path)
+        data = json(json_path, cache=False)
         self.assertEqual(data["name"], "open-source-guide")
 
 
