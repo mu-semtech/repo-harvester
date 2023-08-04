@@ -7,6 +7,8 @@ from ..app.Repo import Repo
 from ..app.Category import Category
 from ..app.utils.request import _url_to_cachefile_path
 from .helpers import test_file_at
+from shutil import rmtree
+
 
 def test_file_url_generator(repo: object, filename, version=None):
     if not version:
@@ -43,15 +45,33 @@ class TestRepoClass(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+
+    def test_local_dir(self):
+        self.assertEqual(
+            self.repo.local_dir,
+            "/tmp/repo-harvester/parser/"
+            )
+    
+    def test_clone_files(self):
+        repo = self.repo
+
+        self.assertFalse(path.exists(repo.local_dir))
+        repo.repo_url = "https://github.com/mu-semtech/mu-cl-resources"
+        repo.clone_files()
+        self.assertTrue(path.exists(repo.local_dir))
+
+        rmtree(repo.local_dir)
+    
+
     
     def test_get_file_url(self):
         self.assertEqual(
-            self.repo.get_file_url("README.md"),
+            self.repo.get_file_path("README.md"),
             "https://example.com/parser/README.md")
     
     def test_get_file_url_param_version(self):
         self.assertEqual(
-            self.repo.get_file_url("README.md", "v0.0.1"),
+            self.repo.get_file_path("README.md", "v0.0.1"),
             "https://example.com/parser/v0.0.1/README.md")
     
     def test_get_file_contents(self):

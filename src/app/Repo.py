@@ -1,7 +1,8 @@
 # Native imports
 from typing import Any, List
 # Relative imports
-from .utils.request import contents, env_var_rh_cache_is_true
+from os.path import join
+from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
 from divio_docs_parser import DivioDocs
@@ -64,7 +65,9 @@ class Repo():
                  repo_url: str=None, 
                  homepage_url: str=None, 
                  category_data: Any=None, 
-                 other_data: Any=None) -> None:
+                 other_data: Any=None,
+                 clone_files=False,
+                 clone_parent_dir=TMP_REPOHARVESTER) -> None:
         self.name = name
         self.description = description
         self.imagename = name
@@ -76,22 +79,51 @@ class Repo():
         
         self.reposource = reposource
 
+
         if category_data:
             self.category = self.reposource.parse_category(category_data)
+        
+        self.clone_parent_dir = clone_parent_dir
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
 
-        #self = override_repo_values(self)
 
-    def get_file_url(self, filename, version=None):
+        if clone_files:
+            clone_files()
+
+        #self = override_repo_values(self)
+    
+    @property
+    def local_dir(self):
+        return join(self.clone_parent_dir, self.name + "/")
+
+    def clone_files(self):
+        self.GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
+
+        branches = [branch.name for branch in self.GitPython.branches]
+        if False:  # TODO implement arg
+            pass
+        elif "main" in branches:
+            self.default_branch = "main"
+        elif "master" in branches:
+            self.default_branch = "master"
+        else:
+            self.default_branch = branches[0]
+        
+    
+
+    def get_file_path(self, filename, version=None):
         """When given a filename (and optionally version), return the files' url"""
-        return self.reposource.file_url_generator(self, filename, version)
+        if version:
+            self.GitPython.active_branch = version
+        else:
+            self.GitPython.active_branch = self.default_branch or "main" or "master"
     
     def get_file_contents(self, path, version=None, cache=env_var_rh_cache_is_true()):
         """Request a files contents. Automatically appends the repo url if a relative path is given"""
         if "http" not in path.lower():
-            path = self.get_file_url(path, version)
+            path = self.get_file_path(path, version)
         return contents(path, cache)
     
     
