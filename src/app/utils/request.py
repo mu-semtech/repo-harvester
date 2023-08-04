@@ -14,13 +14,14 @@ Helper functions to handle requests & caching
 
 CACHE_ENABLED = environ["MODE"] == "development"
 
-if CACHE_ENABLED:
-    cache_dir = "cache/"
-    makedirs(cache_dir, exist_ok=True)
+TMP_REPOHARVESTER = "/tmp/repo-harvester/"
 
-def _url_to_cachefile_path(url, extension="json") -> str:
+if CACHE_ENABLED:
+    makedirs(TMP_REPOHARVESTER, exist_ok=True)
+
+def _url_to_cachefile_path(url, extension="json", cache_path=TMP_REPOHARVESTER) -> str:
     """Create a path from an URL. For use during caching"""
-    return join(cache_dir, slugify(url) + "." + extension)
+    return join(cache_path, slugify(url) + "." + extension)
 
 def _get_from_cache(url) -> Union[str,bool]:
     """Read data from cachefile for specified url. Returns False if not cached"""
@@ -34,10 +35,10 @@ def _get_from_cache(url) -> Union[str,bool]:
     else:
         return False
 
-def request(url) -> Response:
+def request(url, cache:bool=environ.get("RH_CACHE") is not None) -> Response:
     """Send a request to the url, and cache the result. Returns requests.Response object"""
     data = get(url)
-    if CACHE_ENABLED:
+    if cache:
         with open(_url_to_cachefile_path(url), "w", encoding="UTF-8") as file:
             file.write(data.text)
 
