@@ -1,10 +1,11 @@
 # Native imports
 from typing import Any, List
 # Relative imports
-from .utils.request import contents
+from .utils.request import contents, env_var_rh_cache_is_true
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
 from divio_docs_parser import DivioDocs
+from git import Repo as GitRepo
 
 try:
     from helpers import log
@@ -82,14 +83,27 @@ class Repo():
         self.other_data = other_data
 
         #self = override_repo_values(self)
+
+    def get_file_url(self, filename, version=None):
+        """When given a filename (and optionally version), return the files' url"""
+        return self.reposource.file_url_generator(self, filename, version)
+    
+    def get_file_contents(self, path, version=None, cache=env_var_rh_cache_is_true()):
+        """Request a files contents. Automatically appends the repo url if a relative path is given"""
+        if "http" not in path.lower():
+            path = self.get_file_url(path, version)
+        return contents(path, cache)
+    
     
     @property
     def image(self):
         """Returns Image object for this repository"""
         return self.reposource.imagesource.get_image_by_name(self.imagename)
-    
+
+
     @property
     def revisions(self) -> List[Revision]:
+        return
         """Returns a list of Revisions for this repository"""
         revisions_list = []
 
@@ -126,17 +140,8 @@ class Repo():
         return revisions_list
 
     
-    def get_file_url(self, filename, version=None):
-        """When given a filename (and optionally version), return the files' url"""
-        return self.reposource.file_url_generator(self, filename, version)
-    
-    def get_file_contents(self, path, version=None):
-        """Request a files contents. Automatically appends the repo url if a relative path is given"""
-        if "http" not in path.lower():
-            path = self.get_file_url(path, version)
-        return contents(path)
-    
     def readme(self, escaped=False, version=None):
+        return
         """Returns the contents of the repository's README"""
         data = self.get_file_contents("README.md", version) 
         if escaped:
@@ -152,8 +157,4 @@ class Repo():
     
     def __str__(self) -> str:
         return f"{self.name}@{self.repo_url}"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-
 
