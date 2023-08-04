@@ -29,9 +29,7 @@ class TestImagesourceClass(unittest.TestCase):
     def test_get_non_existant_image(self):
         image_from_imagesource = self.imagesource.get_image_by_name("non-existant")
 
-        self.assertEqual(image_from_imagesource.name, "")
-        self.assertEqual(image_from_imagesource.url, "")
-        self.assertEqual(image_from_imagesource.imagesource, self.imagesource)
+        self.assertIsNone(image_from_imagesource)
 
 if __name__ == "__main__":
     unittest.main()

@@ -25,7 +25,7 @@ class Imagesource():
         for image in self.images:
             if image.name.lower() == name.lower():
                 return image
-        return Image("", "", self)
+        return None
 
 class Image():
     """Class to contain all Image data. Note that a Repo can have multiple images."""
