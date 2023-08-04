@@ -51,7 +51,7 @@ class TestReposourceClass(unittest.TestCase):
         
     def test_file_url_generator(self):
         self.assertIsNone(
-            reposource.file_url_generator("fileanme"),
+            reposource.file_url_generator({}, "filename"),
             "The base Reposource class should return None for url_generator")
         
 if __name__ == "__main__":

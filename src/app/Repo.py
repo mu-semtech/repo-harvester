@@ -5,7 +5,11 @@ from .utils.request import contents
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
 from divio_docs_parser import DivioDocs
-from helpers import log 
+
+try:
+    from helpers import log
+except ModuleNotFoundError:
+    log = print
 """
 Classes for repos and repo revisions.
 
@@ -52,7 +56,14 @@ class Repo():
     This class holds repository data that we want to export,
     as well as functions to get contents from the repository in question
     """
-    def __init__(self, name: str, description: str, repo_url: str, homepage_url: str, reposource: Reposource, category_data: Any, other_data: Any) -> None:
+    def __init__(self, 
+                 reposource: Reposource, 
+                 name: str=None, 
+                 description: str=None, 
+                 repo_url: str=None, 
+                 homepage_url: str=None, 
+                 category_data: Any=None, 
+                 other_data: Any=None) -> None:
         self.name = name
         self.description = description
         self.imagename = name
@@ -64,12 +75,13 @@ class Repo():
         
         self.reposource = reposource
 
-        self.category = self.reposource.parse_category(category_data)
+        if category_data:
+            self.category = self.reposource.parse_category(category_data)
 
         # Data of any kind, in case it is needed
         self.other_data = other_data
 
-        self = override_repo_values(self)
+        #self = override_repo_values(self)
     
     @property
     def image(self):

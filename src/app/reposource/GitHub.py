@@ -1,13 +1,17 @@
 # Native imports
-from typing import List
+from typing import List, Dict
 # Relative imports
 from ..utils.request import json
 from ..Repo import Repo
 from .Reposource import Reposource
 from ..imagesource.Imagesource import Imagesource
-from ..Category import Category, categories
+from ..Category import Category
+from ..utils.categories import categories
 # Package imports
-from helpers import log
+try:
+    from helpers import log
+except ModuleNotFoundError:
+    log = print
 
 """Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 
@@ -16,12 +20,15 @@ class GitHub(Reposource):
         super().__init__(imagesource)
         self.owner = owner
         self.repos: List[Repo] = []
-
-        repos_data = self.get_all_repos()
-        for repo_data in repos_data:
-            self.add_repo(repo_data)
+    
+    def _parse_category_from_data(self, repo_other_data: object, categories:Dict[str, Category]=categories) -> Category:
+        """Override implementation: see Reposource for more info"""
+        if repo_other_data["archived"]:
+            return categories["archive"]
+        else:
+            return None
         
-    def add_repo(self, repo_json):
+    def repo_from_api(self, repo_json):
         """From a GitHub API object, create a Repo object and add it to to self.repos"""
         repo = Repo(
             name=repo_json["name"],
@@ -42,14 +49,8 @@ class GitHub(Reposource):
             repo.tags.append(tag_object["name"])
             #repo.tags.append(Tag(tag_object["name"], tag_object["commit"]))
       
-        self.repos.append(repo)
-    
-    def _parse_category(self, repo_other_data) -> Category:
-        """Override implementation: see Reposource for more info"""
-        if repo_other_data["archived"]:
-            return categories["archive"]
-        else:
-            return None
+        return repo
+        #self.repos.append(repo)
 
     def get_all_repos(self) -> object:
         """ Requests all the repos of the specified user/organisation from GitHub's API, returning the parsed json response"""

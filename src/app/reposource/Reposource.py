@@ -51,8 +51,11 @@ class Reposource():
             if category.matches_string(name):
                 return category
         # Fallback
-        return categories["tools"]  # TODO better fallback configuration
-
+        try:
+            return categories["tools"]  # TODO better fallback configuration
+        except KeyError:
+            print("NO CATEGORY COULD BE ASSIGNED")
+            return None
     
     def parse_category(self, data: Any, categories=categories) -> Category:
         """
@@ -68,7 +71,7 @@ class Reposource():
         else:
             return self._parse_category_from_name(data["name"], categories)  # TODO, this should be replaced
     
-    def url_generator(self, version=None) -> str:
+    def url_generator(self, repo, version=None) -> str:
         """
         When given a version (e.g. main, master, v1.1, c23a3ef...) return the URL to that release/tag/commit's page
 
@@ -76,7 +79,7 @@ class Reposource():
         """
         return None
 
-    def file_url_generator(self, filename, version=None) -> str:
+    def file_url_generator(self, repo, filename, version=None) -> str:
         """
         When given a filename string (e.g. "README.md"), return the full, absolute URL towards it.
         When this is optionally passed a version (can be a release tag, branch...), make sure to return that versions'... version
