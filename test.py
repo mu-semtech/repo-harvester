@@ -3,7 +3,9 @@ import unittest
 from src.tests.test_config_conf import TestConfig
 from src.tests.test_config_override import TestConfigOverride
 from src.tests.test_utils_categories import TestUtilsCategories
+from src.tests.utils.test_request import TestUtilsRequest
 from src.tests.imagesource.t_imgsrc_class import TestImagesourceClass
+from src.tests.imagesource.t_imgsrc_dockerhub import TestImagesourceDockerHub
 
 if __name__ == "__main__":
     suites = []
@@ -11,7 +13,8 @@ if __name__ == "__main__":
         TestConfig,
         TestConfigOverride,
         TestUtilsCategories,
-        TestImagesourceClass
+        TestImagesourceClass,
+        TestImagesourceDockerHub
     ]:
         suites.append(unittest.makeSuite(suite))
 
