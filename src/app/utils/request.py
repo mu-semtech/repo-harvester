@@ -22,13 +22,13 @@ def create_cache(cache_path=TMP_REPOHARVESTER):
 def clear_cache(cache_path=TMP_REPOHARVESTER):
     rmtree(cache_path, ignore_errors=True)
 
-def _url_to_cachefile_path(url, extension="json", cache_path=TMP_REPOHARVESTER) -> str:
+def _url_to_cachefile_path(url, cache_path=TMP_REPOHARVESTER) -> str:
     """Create a path from an URL. For use during caching"""
-    return join(cache_path, slugify(url) + "." + extension)
+    return join(cache_path, slugify(url))
 
-def _get_from_cache(url, extension="json", cache_path=TMP_REPOHARVESTER) -> Union[str,bool]:
+def _get_from_cache(url, cache_path=TMP_REPOHARVESTER) -> Union[str,bool]:
     """Read data from cachefile for specified url. Returns False if not cached"""
-    file = _url_to_cachefile_path(url, extension, cache_path)
+    file = _url_to_cachefile_path(url, cache_path)
 
     if exists(file):
         with open(file, "r", encoding="UTF-8") as file:
@@ -38,31 +38,29 @@ def _get_from_cache(url, extension="json", cache_path=TMP_REPOHARVESTER) -> Unio
     else:
         return False
 
-def request(url, extension="json", cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> Response:
+def request(url, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> Response:
     """Send a request to the url, and cache the result. Returns requests.Response object"""
     data = get(url)
     if cache:
         if not exists(cache_path):
             create_cache(cache_path)
-        with open(_url_to_cachefile_path(url, extension, cache_path), "w", encoding="UTF-8") as file:
+        with open(_url_to_cachefile_path(url, cache_path), "w", encoding="UTF-8") as file:
             file.write(data.text)
 
     return data
 
-def contents(url, request_timeout=0, extension="json", cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> any:
+def contents(url, request_timeout=0, json=False, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> any:
     """Get (raw|json) contents from specified url. Will use cache if exists"""
-    json = extension.lower() == "json"
-
-    data = _get_from_cache(url, extension, cache_path) if cache else False
+    data = _get_from_cache(url, cache_path) if cache else False
     if data:
         return loads(data) if json else data
     else:
-        data = request(url, extension, cache, cache_path)
+        data = request(url, cache, cache_path)
         if request_timeout > 0:
             print(f"Timeout passed! Sleeping for {request_timeout}")
             sleep(request_timeout)
         return data.json() if json else data.text
 
-def json(url, request_timeout=0, extension="json", cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER):
+def json(url, request_timeout=0, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER):
     """Call the contents function, but always return parsed json"""
-    return contents(url, request_timeout, extension=extension, cache=cache, cache_path=cache_path)
+    return contents(url, request_timeout, json=True, cache=cache, cache_path=cache_path)

@@ -6,7 +6,7 @@ from ..helpers import test_file_at
 
 
 test_url = "https://hub.docker.com/_/alpine"
-test_url_expected_output_path = TMP_REPOHARVESTER + "https-hub-docker-com-alpine.json"
+test_url_expected_output_path = TMP_REPOHARVESTER + "https-hub-docker-com-alpine"
 
 class TestUtilsRequest(unittest.TestCase):
 
@@ -24,9 +24,9 @@ class TestUtilsRequest(unittest.TestCase):
         self.assertEqual(generated_path, test_url_expected_output_path)
     
     def test_url_to_cachefile_path_custom_path_and_extension(self):
-        generated_path = _url_to_cachefile_path("https://hub.docker.com/_/alpine", "html", "/tmp/repo-harvester-2/")
-        custom_path = "/tmp/repo-harvester-2/https-hub-docker-com-alpine.html"
-        self.assertEqual(generated_path, custom_path)
+        generated_path_with_custom_cache = _url_to_cachefile_path("https://hub.docker.com/_/alpine", "/tmp/repo-harvester-2/")
+        expected_custom_cache_file_path = "/tmp/repo-harvester-2/https-hub-docker-com-alpine"
+        self.assertEqual(generated_path_with_custom_cache, expected_custom_cache_file_path)
     
     def test_get_from_cache(self):
         # No parameters
@@ -35,20 +35,14 @@ class TestUtilsRequest(unittest.TestCase):
             _get_from_cache(test_url),
             "TEST-1")
         
-        # With extension
-        test_file_at(test_url_expected_output_path.replace(".json", ".txt"), "TEST-2")
-        self.assertEqual(
-            _get_from_cache(test_url, extension="txt"),
-            "TEST-2")
-        
-        # With extension and custom cache path
+        # With Custom cache path
         custom_cache = "/tmp/repo-harvester2/"
-        custom_test_url_expected_output_path = test_url_expected_output_path.replace("repo-harvester", "repo-harvester2").replace(".json", ".txt")
-        test_file_at(custom_test_url_expected_output_path, "TEST-3")
+        custom_test_url_expected_output_path = test_url_expected_output_path.replace("repo-harvester", "repo-harvester2")
+        test_file_at(custom_test_url_expected_output_path, "TEST-2")
 
         self.assertEqual(
-            _get_from_cache(test_url, extension="txt", cache_path=custom_cache),
-            "TEST-3")
+            _get_from_cache(test_url, cache_path=custom_cache),
+            "TEST-2")
 
         clear_cache(custom_cache)
         
