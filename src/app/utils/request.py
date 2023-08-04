@@ -14,7 +14,8 @@ Helper functions to handle requests & caching
 """
 
 TMP_REPOHARVESTER = "/tmp/repo-harvester/"
-ENV_VAR_RH_CACHE_IS_TRUE = bool(environ.get("RH_CACHE"))
+def env_var_rh_cache_is_true() -> bool:
+    bool(environ.get("RH_CACHE"))
 
 def create_cache(cache_path=TMP_REPOHARVESTER):
     makedirs(cache_path, exist_ok=True)
@@ -38,7 +39,7 @@ def _get_from_cache(url, cache_path=TMP_REPOHARVESTER) -> Union[str,bool]:
     else:
         return False
 
-def request(url, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> Response:
+def request(url, cache=env_var_rh_cache_is_true(), cache_path=TMP_REPOHARVESTER) -> Response:
     """Send a request to the url, and cache the result. Returns requests.Response object"""
     data = get(url)
     if cache:
@@ -49,7 +50,7 @@ def request(url, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -
 
     return data
 
-def contents(url, request_timeout=0, json=False, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER) -> any:
+def contents(url, request_timeout=0, json=False, cache=env_var_rh_cache_is_true(), cache_path=TMP_REPOHARVESTER) -> any:
     """Get (raw|json) contents from specified url. Will use cache if exists"""
     data = _get_from_cache(url, cache_path) if cache else False
     if data:
@@ -61,6 +62,6 @@ def contents(url, request_timeout=0, json=False, cache=ENV_VAR_RH_CACHE_IS_TRUE,
             sleep(request_timeout)
         return data.json() if json else data.text
 
-def json(url, request_timeout=0, cache=ENV_VAR_RH_CACHE_IS_TRUE, cache_path=TMP_REPOHARVESTER):
+def json(url, request_timeout=0, cache=env_var_rh_cache_is_true(), cache_path=TMP_REPOHARVESTER):
     """Call the contents function, but always return parsed json"""
     return contents(url, request_timeout, json=True, cache=cache, cache_path=cache_path)
