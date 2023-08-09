@@ -121,27 +121,6 @@ class TestRepoClass(unittest.TestCase):
             self.repo.get_file_contents, 
             "README.md", 
             TAG_WITHOUT_README)
-        
-
-    def test_get_file_contents_param_version(self):
-        return
-        test_file_location = _url_to_cachefile_path("https://example.com/parser/v0.0.1/README.md")
-        test_file_at(test_file_location, "Content")
-
-        self.assertEqual(
-            self.repo.get_file_contents("README.md", "v0.0.1", cache=True),
-            "Content")
-        
-        remove(test_file_location)
-
-    
-    def test_get_file_contents_external_path(self):
-        return
-        content = self.repo.get_file_contents("https://google.com")
-        self.assertTrue(content.lower().startswith("<!doctype html>"))
-        self.assertTrue(content.lower().endswith("</html>"))
-
-
 
     def test_prop_image(self):
         return

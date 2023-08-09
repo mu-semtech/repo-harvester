@@ -127,7 +127,6 @@ class Repo():
         
 
     def _get_target_from(self, target_name: str, possible_targets: list):
-        print(possible_targets)
         targets = [target for target in possible_targets if target.name.endswith(target_name)]
         if len(targets) > 1:
             raise ValueError("Multiple checkout targets for " + target_name)
@@ -138,10 +137,6 @@ class Repo():
 
 
     def checkout(self, checkout_target:str=None):
-        #if branch_or_version_or_tag_or_commit:
-
-        
-
         branch: HEAD = self._get_target_from(checkout_target, self.GitPython.branches)
         if branch is not None:
             return branch.checkout()
@@ -149,11 +144,6 @@ class Repo():
         head: HEAD = self._get_target_from(checkout_target, self.GitPython.heads)
         if head is not None:
             return head.checkout()
-        
-        
-        
-        
-        
 
         tag: TagReference = self._get_target_from(checkout_target, self.GitPython.tags)
         if tag is not None:
@@ -168,25 +158,6 @@ class Repo():
 
         raise ValueError("Ref " + checkout_target + " not found!")
         
-
-        """
-        for list in [
-            self.GitPython.branches, 
-            self.GitPython.refs,
-            self.GitPython.heads, 
-            self.GitPython.tags]:
-            target = self._get_target_from(checkout_target, list)
-            if target is not None:
-                if hasattr(target, "checkout"):
-                    target.checkout()
-                else:
-                    print("ohno")
-                    print(target)
-                    #target.ref.checkout(force=True)
-                return
-        
-        raise ValueError("Ref " + checkout_target + " not found!")
-        """
         
     def _set_version_or_default(self, version=None):
         if version:
