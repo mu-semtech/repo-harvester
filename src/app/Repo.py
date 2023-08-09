@@ -183,10 +183,12 @@ class Repo():
 
     def get_file_contents(self, path, version=None):
         """Request a files contents. Automatically appends the repo url if a relative path is given"""
-        with open(self.get_file_path(path, version), "r") as file:
-            data = file.read()
-        return data
-    
+        try:
+            with open(self.get_file_path(path, version), "r") as file:
+                data = file.read()
+            return data
+        except FileNotFoundError:
+            return None    
     
     @property
     def image(self):
@@ -194,7 +196,6 @@ class Repo():
         return self.reposource.imagesource.get_image_by_name(self.imagename)
 
 
-    @property
     def revisions(self) -> List[Revision]:
         """Returns a list of Revisions for this repository"""
         revisions_list = []
@@ -215,7 +216,7 @@ class Repo():
                         image.imagesource.url_generator(image) if has_images else None,
                         repo_tag,
                         self.reposource.url_generator(self, repo_tag),
-                        self.readme(False, repo_tag)
+                        self.get_file_contents("README.md", repo_tag)
                     ))
                 except StopIteration:
                     pass  # image_tag not found, pass

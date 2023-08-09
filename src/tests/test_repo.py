@@ -8,6 +8,7 @@ from ..app.Category import Category
 from ..app.utils.request import _url_to_cachefile_path, contents
 from .helpers import test_file_at
 from shutil import rmtree
+from divio_docs_parser import DivioDocs
 
 
 def test_file_url_generator(repo: object, filename, version=None):
@@ -24,7 +25,7 @@ test_reposource.file_url_generator = test_file_url_generator
 
 test_projectname = "mu-cl-resources"
 test_image = Image(test_projectname, "https://example.com/", test_imagesource)
-test_image.tags = ["latest", "1.17.1", "1.10.2"] 
+test_image.tags = ["latest", "1.22.1", "1.17.1", "1.10.2"] 
 
 TAG_WITHOUT_README = "v1.10.2"
 TAG_OLD_README = "v1.17.1"
@@ -107,8 +108,8 @@ class TestRepoClass(unittest.TestCase):
     
     def test_get_file_contents_tag(self):
         version = TAG_OLD_README
-        contents_from_github_from_version = contents(f"https://raw.githubusercontent.com/mu-semtech/mu-cl-resources/{version}/README.md")
-        contents_from_github_from_master = contents("https://raw.githubusercontent.com/mu-semtech/mu-cl-resources/master/README.md")
+        contents_from_github_from_version = contents(f"https://raw.githubusercontent.com/mu-semtech/mu-cl-resources/{version}/README.md", cache=True)
+        contents_from_github_from_master = contents("https://raw.githubusercontent.com/mu-semtech/mu-cl-resources/master/README.md", cache=True)
 
         contents_from_repo = self.repo.get_file_contents("README.md", version)
 
@@ -120,11 +121,8 @@ class TestRepoClass(unittest.TestCase):
             contents_from_repo,
             contents_from_github_from_master)
         
-        self.assertRaises(
-            FileNotFoundError, 
-            self.repo.get_file_contents, 
-            "README.md", 
-            TAG_WITHOUT_README)
+        self.assertIsNone(self.repo.get_file_contents(
+            "README.md", TAG_WITHOUT_README))
         
 
     def test_prop_image(self):
@@ -133,12 +131,16 @@ class TestRepoClass(unittest.TestCase):
 
 
     def test_revisions(self):
-        print(self.repo.revisions)
-        revisions = self.repo.revisions
-        self.assertEqual(len(revisions), 2)
-        print(revisions[0].docs.how_to_guides)
-        print(revisions[1].docs.how_to_guides)
-        #self.assertEqual(, )
+        revisions = self.repo.revisions()
+        self.assertEqual(len(revisions), 3)
+        
+        tag_to_test = "v1.22.1"
+
+        revision = [revision for revision in revisions if revision.repo_tag == tag_to_test][0]
+
+        docs_from_github = contents(f"https://raw.githubusercontent.com/mu-semtech/mu-cl-resources/{tag_to_test}/README.md", cache=True)
+        self.assertEqual(DivioDocs(docs_from_github).tutorials.get("README.md"),
+                         revision.docs.tutorials.get("README.md"))
 
 
 if __name__ == "__main__":
