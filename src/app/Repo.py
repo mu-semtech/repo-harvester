@@ -6,7 +6,8 @@ from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
 from divio_docs_parser import DivioDocs
-from git import Repo as GitRepo
+from git import Repo as GitRepo, TagReference, HEAD, Reference
+from pathlib import Path
 
 try:
     from helpers import log
@@ -90,16 +91,29 @@ class Repo():
 
 
         if clone_files:
-            clone_files()
+            self.clone_files()
 
         #self = override_repo_values(self)
     
     @property
     def local_dir(self):
-        return join(self.clone_parent_dir, self.name + "/")
+        return Path(join(self.clone_parent_dir, self.name + "/"))
+    
+    @property
+    def GitPython(self) -> GitRepo:
+        if hasattr(self, "_GitPython"):
+            return self._GitPython
+        else:
+            self.clone_files()
+            return self.GitPython
+
 
     def clone_files(self):
-        self.GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
+        self._GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
+        for remote in self.GitPython.remotes:
+            remote.fetch()
+            
+        
 
         branches = [branch.name for branch in self.GitPython.branches]
         if False:  # TODO implement arg
@@ -111,20 +125,88 @@ class Repo():
         else:
             self.default_branch = branches[0]
         
+
+    def _get_target_from(self, target_name: str, possible_targets: list):
+        print(possible_targets)
+        targets = [target for target in possible_targets if target.name.endswith(target_name)]
+        if len(targets) > 1:
+            raise ValueError("Multiple checkout targets for " + target_name)
+        elif len(targets) == 1:
+            return targets[0]
+        else:
+            return None
+
+
+    def checkout(self, checkout_target:str=None):
+        #if branch_or_version_or_tag_or_commit:
+
+        
+
+        branch: HEAD = self._get_target_from(checkout_target, self.GitPython.branches)
+        if branch is not None:
+            return branch.checkout()
+        
+        head: HEAD = self._get_target_from(checkout_target, self.GitPython.heads)
+        if head is not None:
+            return head.checkout()
+        
+        
+        
+        
+        
+
+        tag: TagReference = self._get_target_from(checkout_target, self.GitPython.tags)
+        if tag is not None:
+            return self.GitPython.git.execute(["git", "checkout", checkout_target])
+            #return tag.reference.checkout()
+        #target: Reference = self._get_target_from(checkout_target, self.GitPython.references)
+
+        reference: Reference = self._get_target_from(checkout_target, self.GitPython.refs)
+        if reference is not None:
+            return reference.checkout()
+
+
+        raise ValueError("Ref " + checkout_target + " not found!")
+        
+
+        """
+        for list in [
+            self.GitPython.branches, 
+            self.GitPython.refs,
+            self.GitPython.heads, 
+            self.GitPython.tags]:
+            target = self._get_target_from(checkout_target, list)
+            if target is not None:
+                if hasattr(target, "checkout"):
+                    target.checkout()
+                else:
+                    print("ohno")
+                    print(target)
+                    #target.ref.checkout(force=True)
+                return
+        
+        raise ValueError("Ref " + checkout_target + " not found!")
+        """
+        
+    def _set_version_or_default(self, version=None):
+        if version:
+            self.checkout(version)
+        else:
+            self.checkout(self.default_branch or "main" or "master")
+    
     
 
     def get_file_path(self, filename, version=None):
         """When given a filename (and optionally version), return the files' url"""
-        if version:
-            self.GitPython.active_branch = version
-        else:
-            self.GitPython.active_branch = self.default_branch or "main" or "master"
-    
-    def get_file_contents(self, path, version=None, cache=env_var_rh_cache_is_true()):
+        self._set_version_or_default(version)
+        return self.local_dir.joinpath(filename)
+
+
+    def get_file_contents(self, path, version=None):
         """Request a files contents. Automatically appends the repo url if a relative path is given"""
-        if "http" not in path.lower():
-            path = self.get_file_path(path, version)
-        return contents(path, cache)
+        with open(self.get_file_path(path, version), "r") as file:
+            data = file.read()
+        return data
     
     
     @property
