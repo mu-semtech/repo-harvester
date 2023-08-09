@@ -1,7 +1,7 @@
 # Native imports
 from typing import Any, List
 # Relative imports
-from os.path import join
+from os.path import join, exists
 from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
@@ -73,8 +73,6 @@ class Repo():
         self.description = description
         self.imagename = name
 
-        self.tags = []
-
         self.repo_url = repo_url
         self.homepage_url = homepage_url
         
@@ -92,7 +90,7 @@ class Repo():
 
         if clone_files:
             self.clone_files()
-
+        
         #self = override_repo_values(self)
     
     @property
@@ -107,11 +105,21 @@ class Repo():
             self.clone_files()
             return self.GitPython
 
+    
+
+    @property
+    def tags(self) -> List[str]:
+        return [tag.name for tag in self.GitPython.tags]
+
 
     def clone_files(self):
-        self._GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
+        if self.local_dir.exists():
+            self._GitPython = GitRepo(self.local_dir)
+        else:
+            self._GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
         for remote in self.GitPython.remotes:
             remote.fetch()
+            remote.pull()
             
         
 
@@ -188,7 +196,6 @@ class Repo():
 
     @property
     def revisions(self) -> List[Revision]:
-        return
         """Returns a list of Revisions for this repository"""
         revisions_list = []
 
@@ -218,7 +225,7 @@ class Repo():
                 None,
                 self.name,
                 self.reposource.url_generator(self),
-                self.readme(False)
+                self.get_file_contents("README.md")
             ))
                 
         print("Revisions: " + str(revisions_list))

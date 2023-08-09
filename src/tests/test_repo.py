@@ -17,12 +17,14 @@ def test_file_url_generator(repo: object, filename, version=None):
         return f"https://example.com/{repo.name}/{version}/{filename}"
 
 test_imagesource = Imagesource()
+test_imagesource.url_generator = lambda x: "https://hub.docker.com/r/semtech/mu-cl-resources"
 test_reposource = Reposource(test_imagesource)
-test_reposource.url_generator = lambda version: f"https://example.com/{version}/"
+test_reposource.url_generator = lambda repo, version: f"https://example.com/{version}/"
 test_reposource.file_url_generator = test_file_url_generator
 
 test_projectname = "mu-cl-resources"
 test_image = Image(test_projectname, "https://example.com/", test_imagesource)
+test_image.tags = ["latest", "1.17.1", "1.10.2"] 
 
 TAG_WITHOUT_README = "v1.10.2"
 TAG_OLD_README = "v1.17.1"
@@ -52,13 +54,6 @@ class TestRepoClass(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
-
-    def test_local_dir(self):
-        self.assertEqual(
-            str(self.repo.local_dir),
-            "/tmp/repo-harvester/mu-cl-resources"
-            )
-    
     def test_clone_files(self):
         repo = self.repo
         rmtree(repo.local_dir, ignore_errors=True)
@@ -67,8 +62,17 @@ class TestRepoClass(unittest.TestCase):
         repo.clone_files()
         self.assertTrue(path.exists(repo.local_dir))
 
-        #rmtree(repo.local_dir)
-    
+
+
+    def test_local_dir(self):
+        self.assertEqual(
+            str(self.repo.local_dir),
+            "/tmp/repo-harvester/mu-cl-resources"
+            )
+        
+    def test_tags(self):
+        for tag in [TAG_WITHOUT_README, TAG_OLD_README]: 
+            self.assertTrue(tag in self.repo.tags)
 
     
     def test_get_file_path(self):
@@ -121,13 +125,20 @@ class TestRepoClass(unittest.TestCase):
             self.repo.get_file_contents, 
             "README.md", 
             TAG_WITHOUT_README)
+        
 
     def test_prop_image(self):
-        return
         self.assertEqual(self.repo.image, test_image)
         self.assertIsNone(self.repo_without_image.image)
 
 
+    def test_revisions(self):
+        print(self.repo.revisions)
+        revisions = self.repo.revisions
+        self.assertEqual(len(revisions), 2)
+        print(revisions[0].docs.how_to_guides)
+        print(revisions[1].docs.how_to_guides)
+        #self.assertEqual(, )
 
 
 if __name__ == "__main__":
