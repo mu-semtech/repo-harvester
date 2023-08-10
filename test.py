@@ -1,6 +1,7 @@
 import unittest
 
 from src.tests.test_repo import TestRepoClass
+from src.tests.test_revision import TestRevisionClass
 
 from src.tests.config.test_conf import TestConfig
 from src.tests.config.test_override import TestConfigOverride

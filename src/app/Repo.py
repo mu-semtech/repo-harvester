@@ -5,9 +5,9 @@ from os.path import join, exists
 from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
-from divio_docs_parser import DivioDocs
 from git import Repo as GitRepo, TagReference, HEAD, Reference
 from pathlib import Path
+from .Revision import Revision
 
 try:
     from helpers import log
@@ -21,37 +21,6 @@ Important factors about these classes:
 - Relevant: as good as all properties in these classes
             are there because they are to be saved into the triplestore
 """
-
-class Revision():
-    """
-    This class holds revision data
-    
-    This should be kept in line with app-mu-info/"""
-    def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, readme: str) -> None:
-        self.image_tag = image_tag
-        self.image_url = image_url
-        self.repo_tag = repo_tag
-        self.repo_url = repo_url
-        self.readme = str(readme)
-        self.docs = DivioDocs(str(readme))
-
-
-    @property
-    def tutorials(self):
-        return self.docs.tutorials
-    
-    @property
-    def how_to_guides(self):
-        return self.docs.how_to_guides
-    
-    @property
-    def explanation(self):
-        return self.docs.explanation
-    
-    @property
-    def reference(self):
-        return self.docs.reference
-    
 
 
 class Repo():

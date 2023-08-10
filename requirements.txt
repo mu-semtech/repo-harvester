@@ -1,3 +1,3 @@
-divio_docs_parser==0.0.1
+divio_docs_parser==0.0.4
 requests==2.24.0
 python_slugify
