@@ -4,7 +4,7 @@ from os import remove, path
 from ...app.imagesource.DockerHub import DockerHub
 from ...app.reposource.GitHub import GitHub
 from ...app.Category import Category
-from ...app.utils.request import json
+from ...app.utils.request import json, contents
 from ..helpers import test_file_at
 
 
@@ -61,6 +61,23 @@ class TestReposourceGithub(unittest.TestCase):
         self.assertEqual(archived_repo.category, test_categories["archive"])
         self.assertEqual(ember_repo.category, test_categories["ember"])
         self.assertEqual(template_repo.category, test_categories["template"])
+
+        self.assertGreaterEqual(len(archived_repo.tags), 1)
+        self.assertGreaterEqual(len(ember_repo.tags), 28)
+        self.assertGreaterEqual(len(template_repo.tags), 3)
+
+
+        self.assertIsNone(archived_repo.homepage_url)
+        self.assertIsNotNone(ember_repo.homepage_url)
+        self.assertIsNone(template_repo.homepage_url)
+
+
+
+        for repo in [archived_repo, ember_repo, template_repo]:
+            self.assertIsNotNone(repo.name)
+            self.assertIsNotNone(repo.description)
+            self.assertTrue("<!doctype html>" in contents(repo.repo_url, cache=True).lower())
+
     
 if __name__ == "__main__":
     unittest.main()

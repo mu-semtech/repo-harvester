@@ -45,8 +45,8 @@ class Repo():
         self.description = description
         self.imagename = name
 
-        self.repo_url = repo_url
-        self.homepage_url = homepage_url
+        self.repo_url = repo_url if repo_url != "" else None
+        self.homepage_url = homepage_url if homepage_url != "" else None
         
         self.reposource = reposource
 
