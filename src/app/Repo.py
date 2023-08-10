@@ -1,7 +1,9 @@
 # Native imports
-from typing import Any, List
+from typing import Any, List, Dict
 # Relative imports
 from os.path import join, exists
+from .Category import Category
+from .utils.categories import categories
 from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
 from .reposource.Reposource import Reposource
 from .config.overrides import override_repo_values
@@ -34,8 +36,9 @@ class Repo():
                  description: str=None, 
                  repo_url: str=None, 
                  homepage_url: str=None, 
-                 category_data: Any=None, 
+                 category_data: Any=None,
                  other_data: Any=None,
+                 categories:Dict[str, Category]=categories,
                  clone_files=False,
                  clone_parent_dir=TMP_REPOHARVESTER) -> None:
         self.name = name
@@ -49,7 +52,7 @@ class Repo():
 
 
         if category_data:
-            self.category = self.reposource.parse_category(category_data)
+            self.category = self.reposource.parse_category(category_data, categories)
         
         self.clone_parent_dir = clone_parent_dir
 

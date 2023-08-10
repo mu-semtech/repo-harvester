@@ -57,7 +57,7 @@ class Reposource():
             print("NO CATEGORY COULD BE ASSIGNED")
             return None
     
-    def parse_category(self, data: Any, categories=categories) -> Category:
+    def parse_category(self, data: Any, categories: Dict[str, Category]=categories) -> Category:
         """
         This function leverages other internal functions to determine the category of a repo.
 

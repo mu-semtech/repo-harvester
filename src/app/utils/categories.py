@@ -1,3 +1,4 @@
+from typing import Dict
 from ..Category import Category
 from ..config.conf import read_config
 
@@ -8,7 +9,7 @@ categories defines the categories to use throughout repo-harvester
 - Regex & category names below are based on mu-semtech naming conventions
 """
 
-def _load_categories_from_config(filename="categories"):
+def _load_categories_from_config(filename="categories") -> Dict[str, Category]:
     config = read_config(filename)
 
     categories = {}

@@ -19,6 +19,13 @@ test_categories = {
     "archive": Category("Archive", "archive")
 }
 
+
+
+archived_repo_json = json("https://api.github.com/repos/mu-semtech/ember-mu-authorization", cache=True)
+ember_repo_json = json("https://api.github.com/repos/mu-semtech/ember-data-table", cache=True)
+template_repo_json = json("https://api.github.com/repos/mu-semtech/mu-python-template", cache=True)
+
+
 class TestReposourceGithub(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -41,11 +48,19 @@ class TestReposourceGithub(unittest.TestCase):
         self.assertEqual(
             github._parse_category_from_data({"name": "python-template", "archived": "True"}, test_categories),
             test_categories["archive"])
+        
+    
     
     def test_repo_from_api(self):
-        repo_json = json("https://api.github.com/repos/mu-semtech/mu-identifier")
         
-        repo = github.repo_from_api(repo_json)
+        archived_repo = github.repo_from_api(archived_repo_json, test_categories)
+        ember_repo = github.repo_from_api(ember_repo_json, test_categories)
+        template_repo = github.repo_from_api(template_repo_json, test_categories)
+
+
+        self.assertEqual(archived_repo.category, test_categories["archive"])
+        self.assertEqual(ember_repo.category, test_categories["ember"])
+        self.assertEqual(template_repo.category, test_categories["template"])
     
 if __name__ == "__main__":
     unittest.main()
