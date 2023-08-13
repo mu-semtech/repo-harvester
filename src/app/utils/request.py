@@ -8,6 +8,7 @@ from shutil import rmtree
 # Package imports
 from requests import get, Response
 from slugify import slugify
+from ..utils.log import log
 
 """
 Helper functions to handle requests & caching
@@ -58,7 +59,7 @@ def contents(url, request_timeout=0, json=False, cache=env_var_rh_cache_is_true(
     else:
         data = request(url, cache, cache_path)
         if request_timeout > 0:
-            print(f"Timeout passed! Sleeping for {request_timeout}")
+            log("WARNING", f"Timeout passed! Sleeping for {request_timeout}")
             sleep(request_timeout)
         return data.json() if json else data.text
 

@@ -4,8 +4,9 @@ from typing import List
 from uuid import uuid3, NAMESPACE_DNS
 # Relative imports
 from .Repo import Repo
+from .utils.log import log
 # mu-python-template imports
-from helpers import generate_uuid, update, log
+from helpers import generate_uuid, update
 from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri
 
 """

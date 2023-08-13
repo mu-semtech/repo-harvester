@@ -4,6 +4,7 @@ from typing import Union, Any, Dict
 from ..Category import Category
 from ..utils.categories import categories
 from ..imagesource.Imagesource import Imagesource
+from ..utils.log import log
 
 """Defines the Reposource superclass"""
 
@@ -54,7 +55,7 @@ class Reposource():
         try:
             return categories["tools"]  # TODO better fallback configuration
         except KeyError:
-            print("NO CATEGORY COULD BE ASSIGNED")
+            log("INFO", "No category could be determined from name " + name)
             return None
     
     def parse_category(self, data: Any, categories: Dict[str, Category]=categories) -> Category:

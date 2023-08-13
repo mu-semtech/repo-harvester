@@ -3,7 +3,7 @@ from src.app.reposource.GitHub import GitHub
 from src.app.imagesource.DockerHub import DockerHub
 from src.app.Category import sort_into_category_dict
 from src.app.sparql import add_repos_to_triplestore
-from helpers import log
+from src.app.utils.log import log
 
 """
 Entrypoint for the repo-harvester:
@@ -34,7 +34,7 @@ def update():
 def add_repos(init=False):
     """Initialise/update the database with repo & image information"""
     
-    log("Updating...")
+    log("INFO", "Updating...")
     repos = []
 
     config = read_config("repos")
@@ -58,7 +58,7 @@ def add_repos(init=False):
         
         repos += reposource.repos
     
-    log(repos)
+    log("INFO", repos)
 
     # Testing stuff
     #dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)

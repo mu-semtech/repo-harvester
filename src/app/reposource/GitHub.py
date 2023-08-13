@@ -7,11 +7,7 @@ from .Reposource import Reposource
 from ..imagesource.Imagesource import Imagesource
 from ..Category import Category
 from ..utils.categories import categories
-# Package imports
-try:
-    from helpers import log
-except ModuleNotFoundError:
-    log = print
+from ..utils.log import log
 
 """Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 

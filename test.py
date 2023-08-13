@@ -20,6 +20,7 @@ if __name__ == "__main__":
     suites = []
     for suite in [
         TestRepoClass,
+        TestRevisionClass,
 
         TestConfig,
         TestConfigOverride,

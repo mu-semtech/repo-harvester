@@ -1,6 +1,7 @@
 from typing import Dict
 from ..Category import Category
 from ..config.conf import read_config
+from ..utils.log import log
 
 """
 categories defines the categories to use throughout repo-harvester
@@ -32,7 +33,7 @@ def sort_into_category_dict(repos: list) -> dict:
     dict_category_repos = {}
     for category_id in categories:
         if category_id == categories["archive"].id:
-            print("Skipping archive!")
+            log("INFO", "Skipping archive!")
             continue
         
         category = categories[category_id]

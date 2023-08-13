@@ -10,11 +10,7 @@ from .config.overrides import override_repo_values
 from git import Repo as GitRepo, TagReference, HEAD, Reference
 from pathlib import Path
 from .Revision import Revision
-
-try:
-    from helpers import log
-except ModuleNotFoundError:
-    log = print
+from .utils.log import log
 """
 Classes for repos and repo revisions.
 
@@ -201,7 +197,6 @@ class Repo():
                 self.get_file_contents("README.md")
             ))
                 
-        print("Revisions: " + str(revisions_list))
         return revisions_list
 
     

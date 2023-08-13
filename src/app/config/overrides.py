@@ -7,11 +7,7 @@ from ..Category import Category
 from .conf import read_config
 from ..utils.categories import categories
 # Package imports
-try:
-    from helpers import log
-except ModuleNotFoundError:
-    log = print
-
+from ..utils.log import log
 """
 Code to handle overrides
 - Reads the defined overrides from overrides.conf
@@ -32,7 +28,7 @@ def apply_overrides(repo: object, categories:Dict[str, Category]=categories, con
 def override_repo_values(repo: object, changes:dict, categories:Dict[str, Category]=categories) -> object:
     if "imagename" in changes:
         repo.imagename = changes["imagename"]
-        log(f"[OVERRIDE] imagename={repo.imagename}")
+        log("INFO", f"[OVERRIDE] imagename={repo.imagename}")
     
     if "category" in changes:
         category_id = changes["category"]
@@ -41,14 +37,14 @@ def override_repo_values(repo: object, changes:dict, categories:Dict[str, Catego
         try:
             category = categories[category_id]
         except KeyError as error:
-            log(f"[OVERRIDE] Category {category_id} doesn't exist!")
+            log("INFO", f"[OVERRIDE] Category {category_id} doesn't exist!")
             raise error
 
         if category:
             repo.category = category
 
 
-        log(f"[OVERRIDE] category={repo.category}")
+        log("INFO", f"[OVERRIDE] category={repo.category}")
 
 
     return repo

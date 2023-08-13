@@ -1,9 +1,6 @@
 from re import search, IGNORECASE
 from .config.conf import read_config
-try:
-    from helpers import log
-except ModuleNotFoundError:
-    log = print
+from .utils.log import log
 """
 All code relevant to categories:
 - Category class 
