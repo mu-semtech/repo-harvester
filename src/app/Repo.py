@@ -1,16 +1,17 @@
-# Native imports
-from typing import Any, List, Dict
-# Relative imports
+# Built-in imports
 from os.path import join, exists
-from .Category import Category
-from .utils.categories import categories
-from .utils.request import contents, env_var_rh_cache_is_true, TMP_REPOHARVESTER
-from .reposource.Reposource import Reposource
-from .config.overrides import override_repo_values
-from git import Repo as GitRepo, TagReference, HEAD, Reference
 from pathlib import Path
+from typing import Any, List, Dict
+
+# Relative imports
+from .reposource import Reposource
+from .utils import categories, TMP_REPOHARVESTER
+from .Category import Category
 from .Revision import Revision
-from .utils.log import log
+from . import apply_overrides
+
+# Package imports
+from git import Repo as GitRepo, TagReference, HEAD, Reference
 """
 Classes for repos and repo revisions.
 

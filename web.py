@@ -1,4 +1,4 @@
-from src.app.config.conf import read_config
+from src.app.config.read_conf_file import read_config
 from src.app.reposource.GitHub import GitHub
 from src.app.imagesource.DockerHub import DockerHub
 from src.app.Category import sort_into_category_dict

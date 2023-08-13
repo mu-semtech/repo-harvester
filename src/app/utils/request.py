@@ -1,14 +1,17 @@
-# Native imports
+# Built-in imports
 from os import makedirs, environ
 from os.path import join, exists
 from json import loads
 from time import sleep
-from typing import Union
 from shutil import rmtree
+from typing import Union
+
+# Relative imports
+from ..utils import log
+
 # Package imports
 from requests import get, Response
 from slugify import slugify
-from ..utils.log import log
 
 """
 Helper functions to handle requests & caching

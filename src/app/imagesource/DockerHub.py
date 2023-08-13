@@ -1,7 +1,9 @@
-from time import sleep
+# Built-in imports
 from typing import List
-from ..utils.request import json
-from .Imagesource import Imagesource, Image
+
+# Relative imports
+from ..utils import json
+from ..imagesource import Imagesource, Image
 
 """Defines the DockerHub Reposource subclass. All DockerHub API code should be contained in this file."""
 

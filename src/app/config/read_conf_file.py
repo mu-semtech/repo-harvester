@@ -1,10 +1,9 @@
+from os.path import isfile, dirname
 from configparser import ConfigParser
 from pathlib import Path
-from os.path import isfile, dirname
 
 
-
-CONFIG_PATH = \
+CONFIG_DIR = \
     Path(dirname(__file__)) \
     .parent\
     .parent\
@@ -14,7 +13,7 @@ CONFIG_PATH = \
 Dynamically calculated. Set to `repo-harvester-root/config/`
 """
 
-def read_config(filename: str, config_dir=CONFIG_PATH) -> ConfigParser:
+def read_config(filename: str, config_dir=CONFIG_DIR) -> ConfigParser:
     if not isfile(filename):
         if "." not in filename:
             filename += ".conf"

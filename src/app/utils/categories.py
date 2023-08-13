@@ -1,7 +1,10 @@
+# Built-in imports
 from typing import Dict
+
+# Relative imports
+from . import log
+from ..config import read_config
 from ..Category import Category
-from ..config.conf import read_config
-from ..utils.log import log
 
 """
 categories defines the categories to use throughout repo-harvester

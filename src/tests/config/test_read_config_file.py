@@ -1,7 +1,7 @@
 import unittest
 
 from os import remove, path
-from ...app.config.conf import read_config, CONFIG_PATH
+from ...app.config.read_conf_file import read_config, CONFIG_DIR
 from ..helpers import test_file_at
 #from ..app.config.overrides import override_repo_values
 
@@ -28,7 +28,7 @@ class TestConfig(unittest.TestCase):
 
     def test_with_filename_without_suffix(self):
         filename = "test"
-        path = CONFIG_PATH.joinpath(filename + ".conf")
+        path = CONFIG_DIR.joinpath(filename + ".conf")
 
         test_file_at(path, test_conf_content)
         
@@ -39,7 +39,7 @@ class TestConfig(unittest.TestCase):
     
     def test_with_filename_with_suffix(self):
         filename = "test"
-        path = CONFIG_PATH.joinpath(filename + ".conf")
+        path = CONFIG_DIR.joinpath(filename + ".conf")
 
         test_file_at(path, test_conf_content)
 

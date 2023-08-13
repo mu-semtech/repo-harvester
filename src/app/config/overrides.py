@@ -1,13 +1,12 @@
-# Native imports
+# Built-in imports
 from typing import Dict
 from re import search, IGNORECASE
-from configparser import ConfigParser
+
 # Relative imports
+from . import read_config
 from ..Category import Category
-from .conf import read_config
-from ..utils.categories import categories
-# Package imports
-from ..utils.log import log
+from ..utils import categories, log
+
 """
 Code to handle overrides
 - Reads the defined overrides from overrides.conf

@@ -1,13 +1,12 @@
-# Native imports
+# Built-in imports
 from typing import List, Dict
+
 # Relative imports
-from ..utils.request import json
-from ..Repo import Repo
-from .Reposource import Reposource
-from ..imagesource.Imagesource import Imagesource
+from ..utils import log, json, categories
+from ..reposource import Reposource
+from ..imagesource import Imagesource
 from ..Category import Category
-from ..utils.categories import categories
-from ..utils.log import log
+from ..Repo import Repo
 
 """Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 

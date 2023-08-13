@@ -1,10 +1,10 @@
-# Native imports
+# Built-in imports
 from typing import Union, Any, Dict
 # Relative imports
+from ..utils import log, categories
 from ..Category import Category
-from ..utils.categories import categories
-from ..imagesource.Imagesource import Imagesource
-from ..utils.log import log
+from .. import Imagesource
+
 
 """Defines the Reposource superclass"""
 

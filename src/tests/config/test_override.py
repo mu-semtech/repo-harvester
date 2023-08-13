@@ -4,7 +4,7 @@ from os import remove, path
 from ..helpers import test_file_at
 from ...app.config.overrides import override_repo_values, apply_overrides
 from ...app.Category import Category
-from ...app.config.conf import CONFIG_PATH
+from ...app.config.read_conf_file import CONFIG_DIR
 
 before_change = "before-change"
 after_change = "after-change"
@@ -37,7 +37,7 @@ Category=archive
 Category=test
 """
 
-overrides_conf = CONFIG_PATH.joinpath("overrides.conf")
+overrides_conf = CONFIG_DIR.joinpath("overrides.conf")
 
 
 class TestConfigOverride(unittest.TestCase):

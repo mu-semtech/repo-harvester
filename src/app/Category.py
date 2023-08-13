@@ -1,6 +1,4 @@
 from re import search, IGNORECASE
-from .config.conf import read_config
-from .utils.log import log
 """
 All code relevant to categories:
 - Category class 
