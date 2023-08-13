@@ -27,6 +27,15 @@ class Imagesource():
                 return image
         return None
 
+    def load_images(self):
+        """
+        When run - even without parameters - all images should be automatically loaded into self.images
+
+        *This is a function that should be overridden.*
+        """
+        pass
+
+
 class Image():
     """Class to contain all Image data. Note that a Repo can have multiple images."""
     def __init__(self, name: str, url: str, imagesource: Imagesource) -> None:

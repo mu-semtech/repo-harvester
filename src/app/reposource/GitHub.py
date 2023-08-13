@@ -66,3 +66,9 @@ class GitHub(Reposource):
         return "https://github.com/{0}/tree/{1}".format(
             repo.other_data["full_name"], version
         )
+
+    def load_repos(self, categories: Dict[str, Category]=categories_from_conf):
+        """Override implementation: see Reposource for more info"""
+        repos_data = self.get_all_repo_data()
+        for repo_data in repos_data:
+            self.repos.append(self.repo_from_api(repo_data, categories))

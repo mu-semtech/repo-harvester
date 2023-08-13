@@ -90,3 +90,10 @@ class Reposource():
         """
         return None
     
+    def load_repos(self):
+        """
+        When run - even without parameters - all repos should be automatically loaded into self.repos
+
+        *This is a function that should be overridden.*
+        """
+        pass
