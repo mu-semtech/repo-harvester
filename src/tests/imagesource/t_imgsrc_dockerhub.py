@@ -1,8 +1,8 @@
 import unittest
 
-from ...app.imagesource.Imagesource import Image
-from ...app.utils.request import request, json
-from ...app.imagesource.DockerHub import DockerHub
+from ...repo_harvester.imagesource.Imagesource import Image
+from ...repo_harvester.utils.request import request, json
+from ...repo_harvester.imagesource.DockerHub import DockerHub
 
 
 imagesource = DockerHub("bitnami")  # Docker image account

@@ -1,7 +1,7 @@
 import unittest
 
-from ...app.reposource.Reposource import Reposource
-from ...app.Category import Category
+from ...repo_harvester.reposource.Reposource import Reposource
+from ...repo_harvester.Category import Category
 
 reposource = Reposource(imagesource=None)
 test_categories = {

@@ -3,10 +3,10 @@ import unittest
 from os import path
 from shutil import rmtree
 
-from ..app.imagesource.Imagesource import Imagesource, Image
-from ..app.reposource.Reposource import Reposource
-from ..app.Repo import Repo
-from ..app.utils.request import contents
+from ..repo_harvester.imagesource.Imagesource import Imagesource, Image
+from ..repo_harvester.reposource.Reposource import Reposource
+from ..repo_harvester.Repo import Repo
+from ..repo_harvester.utils.request import contents
 
 from divio_docs_parser import DivioDocs
 

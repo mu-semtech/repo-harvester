@@ -2,9 +2,9 @@ import unittest
 
 from os import remove, path
 from ..helpers import test_file_at
-from ...app.config.overrides import _override_repo_values, apply_overrides
-from ...app.Category import Category
-from ...app.config.read_conf_file import CONFIG_DIR
+from ...repo_harvester.config.overrides import _override_repo_values, apply_overrides
+from ...repo_harvester.Category import Category
+from ...repo_harvester.config.read_conf_file import CONFIG_DIR
 
 before_change = "before-change"
 after_change = "after-change"

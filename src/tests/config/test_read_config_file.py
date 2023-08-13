@@ -1,9 +1,9 @@
 import unittest
 
 from os import remove, path
-from ...app.config.read_conf_file import read_config, CONFIG_DIR
+from ...repo_harvester.config.read_conf_file import read_config, CONFIG_DIR
 from ..helpers import test_file_at
-#from ..app.config.overrides import override_repo_values
+#from ..repo_harvester.config.overrides import override_repo_values
 
 parameter_value = "Value"
 test_conf_content = \

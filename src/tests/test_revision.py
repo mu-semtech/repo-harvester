@@ -1,8 +1,8 @@
 import unittest
 
-from ..app.Revision import Revision
+from ..repo_harvester.Revision import Revision
 
-from ..app.utils.request import TMP_REPOHARVESTER
+from ..repo_harvester.utils.request import TMP_REPOHARVESTER
 from .helpers import test_file_at
 
 test_data_dir = TMP_REPOHARVESTER + "revision/"

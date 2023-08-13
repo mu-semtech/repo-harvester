@@ -1,6 +1,6 @@
 import unittest
 
-from ...app.imagesource.Imagesource import Imagesource, Image
+from ...repo_harvester.imagesource.Imagesource import Imagesource, Image
 
 
 class TestImagesourceClass(unittest.TestCase):

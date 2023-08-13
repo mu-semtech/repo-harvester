@@ -1,9 +1,9 @@
 import unittest
 
-from ...app.imagesource.DockerHub import DockerHub
-from ...app.reposource.GitHub import GitHub
-from ...app.Category import Category
-from ...app.utils.request import json, contents, request
+from ...repo_harvester.imagesource.DockerHub import DockerHub
+from ...repo_harvester.reposource.GitHub import GitHub
+from ...repo_harvester.Category import Category
+from ...repo_harvester.utils.request import json, contents, request
 
 
 imagesource = DockerHub("semtech")

@@ -2,12 +2,12 @@ import unittest
 
 from os import remove
 
-from ..app.index import load_repos_from, load_repos_from_config
-from ..app.Category import Category
-from ..app.imagesource.Imagesource import Imagesource
-from ..app.imagesource.DockerHub import DockerHub
-from ..app.reposource.Reposource import Reposource
-from ..app.reposource.GitHub import GitHub
+from ..repo_harvester.index import load_repos_from, load_repos_from_config
+from ..repo_harvester.Category import Category
+from ..repo_harvester.imagesource.Imagesource import Imagesource
+from ..repo_harvester.imagesource.DockerHub import DockerHub
+from ..repo_harvester.reposource.Reposource import Reposource
+from ..repo_harvester.reposource.GitHub import GitHub
 
 from .helpers import test_file_at
 

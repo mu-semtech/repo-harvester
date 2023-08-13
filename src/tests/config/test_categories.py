@@ -1,8 +1,8 @@
 import unittest
 
 from os import remove, path
-from ...app.Category import Category
-from ...app.config.categories import _load_categories_from_config
+from ...repo_harvester.Category import Category
+from ...repo_harvester.config.categories import _load_categories_from_config
 from ..helpers import test_file_at
 
 test_file_path = "test.conf"
