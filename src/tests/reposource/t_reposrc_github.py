@@ -4,7 +4,7 @@ from os import remove, path
 from ...app.imagesource.DockerHub import DockerHub
 from ...app.reposource.GitHub import GitHub
 from ...app.Category import Category
-from ...app.utils.request import json, contents
+from ...app.utils.request import json, contents, request
 from ..helpers import test_file_at
 
 
@@ -50,6 +50,13 @@ class TestReposourceGithub(unittest.TestCase):
             test_categories["archive"])
         
     
+    def test_url_generator(self):
+        repo = github.repo_from_api(template_repo_json)
+        self.assertEqual(request(github.url_generator(repo)).status_code, 200)
+        self.assertEqual(request(github.url_generator(repo, repo.tags[0])).status_code, 200)
+
+        self.assertNotEqual(request(github.url_generator(repo, "nonexistant")).status_code, 200)
+
     
     def test_repo_from_api(self):
         
@@ -79,5 +86,11 @@ class TestReposourceGithub(unittest.TestCase):
             self.assertTrue("<!doctype html>" in contents(repo.repo_url, cache=True).lower())
 
     
+    def test_get_all_repo_data(self):
+        repos_data = github.get_all_repo_data()
+        self.assertGreaterEqual(len(repos_data), 50)
+        for repo_data in repos_data:
+            self.assertIsNotNone(github.repo_from_api(repo_data, categories=test_categories))
+
 if __name__ == "__main__":
     unittest.main()
