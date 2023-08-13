@@ -1,15 +1,14 @@
 import unittest
 
-from os import remove, path
+from os import path
+from shutil import rmtree
+
 from ..app.imagesource.Imagesource import Imagesource, Image
 from ..app.reposource.Reposource import Reposource
 from ..app.Repo import Repo
-from ..app.Category import Category
-from ..app.utils.request import _url_to_cachefile_path, contents
-from .helpers import test_file_at
-from shutil import rmtree
-from divio_docs_parser import DivioDocs
+from ..app.utils.request import contents
 
+from divio_docs_parser import DivioDocs
 
 def test_file_url_generator(repo: object, filename, version=None):
     if not version:

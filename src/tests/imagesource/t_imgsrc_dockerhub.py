@@ -1,10 +1,8 @@
 import unittest
 
-from os import remove, path
 from ...app.imagesource.Imagesource import Image
 from ...app.utils.request import request, json
 from ...app.imagesource.DockerHub import DockerHub
-from ..helpers import test_file_at
 
 
 imagesource = DockerHub("bitnami")  # Docker image account

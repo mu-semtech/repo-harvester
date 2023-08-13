@@ -1,13 +1,8 @@
 import unittest
 
-from os import remove, path
-from ..app.imagesource.Imagesource import Imagesource, Image
-from ..app.reposource.Reposource import Reposource
-
 from ..app.Revision import Revision
-from divio_docs_parser import DivioDocs
 
-from ..app.utils.request import clear_cache, _url_to_cachefile_path, TMP_REPOHARVESTER, _get_from_cache, request, contents, json
+from ..app.utils.request import TMP_REPOHARVESTER
 from .helpers import test_file_at
 
 test_data_dir = TMP_REPOHARVESTER + "revision/"

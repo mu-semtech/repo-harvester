@@ -1,11 +1,9 @@
 import unittest
 
-from os import remove, path
 from ...app.imagesource.DockerHub import DockerHub
 from ...app.reposource.GitHub import GitHub
 from ...app.Category import Category
 from ...app.utils.request import json, contents, request
-from ..helpers import test_file_at
 
 
 imagesource = DockerHub("semtech")

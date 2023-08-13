@@ -1,8 +1,6 @@
 import unittest
 
-from os import remove, path
 from ...app.imagesource.Imagesource import Imagesource, Image
-from ..helpers import test_file_at
 
 
 class TestImagesourceClass(unittest.TestCase):

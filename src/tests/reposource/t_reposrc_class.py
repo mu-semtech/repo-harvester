@@ -1,9 +1,7 @@
 import unittest
 
-from os import remove, path
 from ...app.reposource.Reposource import Reposource
 from ...app.Category import Category
-from ..helpers import test_file_at
 
 reposource = Reposource(imagesource=None)
 test_categories = {

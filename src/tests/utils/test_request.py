@@ -1,9 +1,8 @@
 import unittest
 
-from os import remove, path, environ, makedirs, system
+from os import remove, path
 from ...app.utils.request import clear_cache, _url_to_cachefile_path, TMP_REPOHARVESTER, _get_from_cache, request, contents, json
 from ..helpers import test_file_at
-from subprocess import check_output
 
 test_url = "https://hub.docker.com/_/alpine"
 test_url_expected_output_path = TMP_REPOHARVESTER + "https-hub-docker-com-alpine"
