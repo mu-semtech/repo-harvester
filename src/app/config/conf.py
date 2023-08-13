@@ -14,12 +14,12 @@ CONFIG_PATH = \
 Dynamically calculated. Set to `repo-harvester-root/config/`
 """
 
-def read_config(filename: str, config_path=CONFIG_PATH) -> ConfigParser:
+def read_config(filename: str, config_dir=CONFIG_PATH) -> ConfigParser:
     if not isfile(filename):
         if "." not in filename:
             filename += ".conf"
 
-        path = CONFIG_PATH.joinpath(filename)
+        path = config_dir.joinpath(filename)
         filename = str(path.absolute())
     #filename = Path(filename)
     config = ConfigParser()

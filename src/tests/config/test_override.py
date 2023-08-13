@@ -1,10 +1,10 @@
 import unittest
 
 from os import remove, path
-#from ..app.config.conf import read_config, CONFIG_PATH
 from ..helpers import test_file_at
-from ...app.config.overrides import override_repo_values
+from ...app.config.overrides import override_repo_values, apply_overrides
 from ...app.Category import Category
+from ...app.config.conf import CONFIG_PATH
 
 before_change = "before-change"
 after_change = "after-change"
@@ -12,18 +12,39 @@ after_change = "after-change"
 
 
 class RepoLikeClass():
-    def __init__(self) -> None:
-        self.name = "mu-cli"
+    def __init__(self, name: str, category: Category=None) -> None:
+        self.name = name
         self.imagename = before_change
-        self.category = None
+        self.category = category
 
 test_category = Category("Test", "test")
+
+categories = {
+    "test": test_category,
+    "archive": Category("Archive", "archive")
+}
+
+
+config_data = """
+[mu-cli]
+ImageName=mu-cli
+
+[other-repo]
+Category=archive
+
+
+[mu-.*]
+Category=test
+"""
+
+overrides_conf = CONFIG_PATH.joinpath("overrides.conf")
+
 
 class TestConfigOverride(unittest.TestCase):
 
     
     def setUp(self) -> None:
-        self.repo = RepoLikeClass()
+        self.repo = RepoLikeClass("mu-cli")
 
     def tearDown(self) -> None:
         self.repo = None
@@ -51,6 +72,34 @@ class TestConfigOverride(unittest.TestCase):
             override_repo_values,
             self.repo, { "category": "Non-Existant"}
             )
+    
+    def test_apply_overrides(self):
+        test_file_at(overrides_conf, config_data)
+
+
+        repo_mu_cli = self.repo
+        repo_mu_project = RepoLikeClass("mu-project")
+        repo_other = RepoLikeClass("other-repo")
+
+        for repo in [repo_mu_cli, repo_mu_project, repo_other]:
+            self.assertIsNone(repo.category)
+            self.assertEqual(repo.imagename, "before-change")
+        
+
+        repo_mu_cli = apply_overrides(repo_mu_cli, categories=categories)
+        repo_mu_project = apply_overrides(repo_mu_project, categories=categories)
+        repo_other = apply_overrides(repo_other, categories=categories)
+
+
+        self.assertEqual(repo_mu_cli.category, categories["test"])
+        self.assertEqual(repo_other.category, categories["archive"])
+        self.assertEqual(repo_mu_project.category, categories["test"])
+        
+        self.assertEqual(repo_mu_cli.imagename, "mu-cli")
+        self.assertEqual(repo_other.imagename, "before-change")
+        self.assertEqual(repo_mu_project.imagename, "before-change")
+
+        remove(overrides_conf)
         
 
 if __name__ == "__main__":
