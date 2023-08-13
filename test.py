@@ -15,6 +15,7 @@ from src.tests.imagesource.t_imgsrc_dockerhub import TestImagesourceDockerHub
 from src.tests.reposource.t_reposrc_class import TestReposourceClass
 from src.tests.reposource.t_reposrc_github import TestReposourceGithub
 
+from src.tests.test_index import TestIndex
 
 if __name__ == "__main__":
     suites = []
@@ -32,7 +33,9 @@ if __name__ == "__main__":
         TestImagesourceDockerHub,
 
         TestReposourceClass,
-        TestReposourceGithub
+        TestReposourceGithub,
+
+        TestIndex
     ]:
         suites.append(unittest.makeSuite(suite))
 

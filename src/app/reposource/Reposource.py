@@ -4,7 +4,7 @@
 from typing import Union, Any, Dict
 # Relative imports
 from ..utils import log
-from ..config import categories
+from ..config import categories_from_conf
 from ..Category import Category
 from ..imagesource import Imagesource
 
@@ -28,7 +28,7 @@ class Reposource():
         self.repos = []
         self.imagesource = imagesource
     
-    def _parse_category_from_data(self, data: Any, categories: Dict[str, Category]=categories) -> Union[Category, None]:
+    def _parse_category_from_data(self, data: Any, categories: Dict[str, Category]=categories_from_conf) -> Union[Category, None]:
         """
         When given a parameter, return either: 
         - The relevant Category object, based on data from the Reposource and/or Repo
@@ -41,7 +41,7 @@ class Reposource():
         """
         return None
     
-    def _parse_category_from_name(self, name: str, categories: Dict[str, Category]=categories):
+    def _parse_category_from_name(self, name: str, categories: Dict[str, Category]=categories_from_conf):
         """
         This internal function will be used when the category can not be automatically determined through _parse_category.
         When given a name string, use regex to determine the category.
@@ -59,7 +59,7 @@ class Reposource():
             log("INFO", "No category could be determined from name " + name)
             return None
     
-    def parse_category(self, data: Any, categories: Dict[str, Category]=categories) -> Category:
+    def parse_category(self, data: Any, categories: Dict[str, Category]=categories_from_conf) -> Category:
         """
         This function leverages other internal functions to determine the category of a repo.
 
@@ -90,7 +90,7 @@ class Reposource():
         """
         return None
     
-    def load_repos(self):
+    def load_repos(self, categories: Dict[str, Category]=categories_from_conf):
         """
         When run - even without parameters - all repos should be automatically loaded into self.repos
 
