@@ -2,7 +2,7 @@ import unittest
 
 from os import remove, path
 from ..helpers import test_file_at
-from ...app.config.overrides import override_repo_values, apply_overrides
+from ...app.config.overrides import _override_repo_values, apply_overrides
 from ...app.Category import Category
 from ...app.config.read_conf_file import CONFIG_DIR
 
@@ -55,7 +55,7 @@ class TestConfigOverride(unittest.TestCase):
         self.assertEqual(repo.imagename, before_change)
         self.assertIsNone(repo.category)
 
-        repo = override_repo_values(self.repo, {
+        repo = _override_repo_values(self.repo, {
             "imagename": after_change,
             "category": "Test",
             },
@@ -69,7 +69,7 @@ class TestConfigOverride(unittest.TestCase):
     def test_override_repo_values_invalid_category(self):
         self.assertRaises(
             KeyError, 
-            override_repo_values,
+            _override_repo_values,
             self.repo, { "category": "Non-Existant"}
             )
     

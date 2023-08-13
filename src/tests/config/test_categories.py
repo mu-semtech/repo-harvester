@@ -2,7 +2,7 @@ import unittest
 
 from os import remove, path
 from ...app.Category import Category
-from ...app.utils.categories import _load_categories_from_config
+from ...app.config.categories import _load_categories_from_config
 from ..helpers import test_file_at
 
 test_file_path = "test.conf"
@@ -16,7 +16,7 @@ regex=.*-template
 test_file_category = Category("Templates", "templates", ".*-template")
 
 
-class TestUtilsCategories(unittest.TestCase):
+class TestConfigCategories(unittest.TestCase):
 
     def setUp(self) -> None:
         test_file_at(test_file_path, test_file_content)

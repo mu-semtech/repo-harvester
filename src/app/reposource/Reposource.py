@@ -1,12 +1,13 @@
+"""Defines the Reposource base class"""
+
 # Built-in imports
 from typing import Union, Any, Dict
 # Relative imports
-from ..utils import log, categories
+from ..utils import log
+from ..config import categories
 from ..Category import Category
-from .. import Imagesource
+from ..imagesource import Imagesource
 
-
-"""Defines the Reposource superclass"""
 
 
 class Reposource():
@@ -15,11 +16,11 @@ class Reposource():
 
     This encompasses:
     - The host (e.g. GitHub, Gitea) and how to read & interpret data from their API's
-    - Any info that is needed to find any relevant repositories
+    - Any info that is needed to collect any relevant repositories
       Usually, this will include the owner of a specific account from which to harvest
     - Code to (if possible) determine the Category
 
-    This class is *not* meant to be called directly. Rather it is meant to be used to subclass Repo sources.
+    This class is *not* meant to be used directly. Rather it is meant to be used to subclass Repo sources.
     See GitHub.py for an example
     
     """

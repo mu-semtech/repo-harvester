@@ -5,10 +5,10 @@ from typing import Any, List, Dict
 
 # Relative imports
 from .reposource import Reposource
-from .utils import categories, TMP_REPOHARVESTER
+from .config import apply_overrides, categories_from_conf
+from .utils import TMP_REPOHARVESTER
 from .Category import Category
 from .Revision import Revision
-from . import apply_overrides
 
 # Package imports
 from git import Repo as GitRepo, TagReference, HEAD, Reference
@@ -35,7 +35,7 @@ class Repo():
                  homepage_url: str=None, 
                  category_data: Any=None,
                  other_data: Any=None,
-                 categories:Dict[str, Category]=categories,
+                 categories:Dict[str, Category]=categories_from_conf,
                  clone_files=False,
                  clone_parent_dir=TMP_REPOHARVESTER) -> None:
         self.name = name

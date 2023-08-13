@@ -1,14 +1,16 @@
+"""Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
+
 # Built-in imports
 from typing import List, Dict
 
 # Relative imports
-from ..utils import log, json, categories
+from ..config import categories_from_conf
+from ..utils import log, json
 from ..reposource import Reposource
 from ..imagesource import Imagesource
 from ..Category import Category
 from ..Repo import Repo
 
-"""Defines the GitHub Reposource subclass. All GitHub API code should be contained in this file."""
 
 class GitHub(Reposource):
     def __init__(self, owner: str, imagesource: Imagesource) -> None:
@@ -16,14 +18,14 @@ class GitHub(Reposource):
         self.owner = owner
         self.repos: List[Repo] = []
     
-    def _parse_category_from_data(self, repo_other_data: object, categories:Dict[str, Category]=categories) -> Category:
+    def _parse_category_from_data(self, repo_other_data: object, categories:Dict[str, Category]=categories_from_conf) -> Category:
         """Override implementation: see Reposource for more info"""
         if repo_other_data["archived"]:
             return categories["archive"]
         else:
             return None
         
-    def repo_from_api(self, repo_json, categories: Dict[str, Category]=categories):
+    def repo_from_api(self, repo_json, categories: Dict[str, Category]=categories_from_conf):
         """From a GitHub API object, create a Repo object and add it to to self.repos"""
         repo = Repo(
             name=repo_json["name"],

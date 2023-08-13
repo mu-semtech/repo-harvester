@@ -5,8 +5,8 @@ from src.tests.test_revision import TestRevisionClass
 
 from src.tests.config.test_read_config_file import TestConfig
 from src.tests.config.test_override import TestConfigOverride
+from src.tests.config.test_categories import TestConfigCategories
 
-from src.tests.utils.test_categories import TestUtilsCategories
 from src.tests.utils.test_request import TestUtilsRequest
 
 from src.tests.imagesource.t_imgsrc_class import TestImagesourceClass
@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
         TestConfig,
         TestConfigOverride,
+        TestConfigCategories,
 
-        TestUtilsCategories,
         TestUtilsRequest,
 
         TestImagesourceClass,
