@@ -1,9 +1,5 @@
-from src.app.config.read_conf_file import read_config
-from src.app.reposource.GitHub import GitHub
-from src.app.imagesource.DockerHub import DockerHub
-from src.app.Category import sort_into_category_dict
-from src.app.sparql import add_repos_to_triplestore
-from src.app.utils.log import log
+from src.repo_harvester import load_repos_from_config
+from src.repo_harvester.sparql import add_repos_to_triplestore 
 
 """
 Entrypoint for the repo-harvester:
@@ -34,39 +30,7 @@ def update():
 def add_repos(init=False):
     """Initialise/update the database with repo & image information"""
     
-    log("INFO", "Updating...")
-    repos = []
-
-    config = read_config("repos")
-    for section_name in config.sections():
-        section = config[section_name]
-        
-
-        images_username = section.get("images_username")
-        repos_username = section.get("repos_username")
-        
-        # Get Imagesource first, because it has to be added to Reposource
-        if section.get("images_host").lower() == "dockerhub":
-            imagesource = DockerHub(images_username)
-        else:
-            imagesource = DockerHub(images_username)
-
-        if section.get("repos_host").lower() == "github":
-            reposource = GitHub(repos_username, imagesource)
-        else:
-            reposource = GitHub(repos_username, imagesource)
-        
-        repos += reposource.repos
-    
-    log("INFO", repos)
-
-    # Testing stuff
-    #dict_category_repos = sort_into_category_dict(mu_semtech_github.repos)
-    #repo = mu_semtech_github.repos[8]
-    #log(repo)
-    #log(repo.description)
-    #log(repo.image)
-    #log(repo.revisions)
+    repos = load_repos_from_config()
 
     add_repos_to_triplestore(repos, init)
     return "<h1>Repo harvester updated!</h1>"
