@@ -1,3 +1,7 @@
+"""Contains the Repo class"""
+
+
+
 # Built-in imports
 from os.path import join, exists
 from pathlib import Path
@@ -12,20 +16,16 @@ from .Revision import Revision
 
 # Package imports
 from git import Repo as GitRepo, TagReference, HEAD, Reference
-"""
-Classes for repos and repo revisions.
-
-Important factors about these classes:
-- Universal: they are platform agnostic
-- Relevant: as good as all properties in these classes
-            are there because they are to be saved into the triplestore
-"""
-
 
 class Repo():
     """
     This class holds repository data that we want to export,
     as well as functions to get contents from the repository in question
+
+    Important factors to consider when changing this class:
+        - Universal: they are platform agnostic
+        - Relevant: as good as all properties in these classes
+                    are there because they are to be saved into the triplestore
     """
     def __init__(self, 
                  reposource: Reposource, 
@@ -64,10 +64,21 @@ class Repo():
     
     @property
     def local_dir(self):
+        """Returns the location where the repository would be/is cloned"""
         return Path(join(self.clone_parent_dir, self.name + "/"))
     
     @property
     def GitPython(self) -> GitRepo:
+        """
+        Returns the GitPython.Repo object for this repository.
+        If that object doesn't exist already self.clone_files() will be run,
+        after which the object will exist and be added 
+
+        This in-between property getter allows repos to be cloned only
+        when necessary, by not requiring clone_files on init; yet ensuring
+        that any data from the clone in particular will be returned if asked
+        """
+
         if hasattr(self, "_GitPython"):
             return self._GitPython
         else:
@@ -78,10 +89,16 @@ class Repo():
 
     @property
     def tags(self) -> List[str]:
+        """Returns the repository tags"""
         return [tag.name for tag in self.GitPython.tags]
 
 
     def clone_files(self):
+        """
+        - (If it doesn't already exist) Clones the repository
+        - Run git fetch & pull
+        - Determine default branch
+        """
         if self.local_dir.exists():
             self._GitPython = GitRepo(self.local_dir)
         else:
@@ -104,6 +121,10 @@ class Repo():
         
 
     def _get_target_from(self, target_name: str, possible_targets: list):
+        """
+        Helper function for _checkout; allows finding exactly 1 result from
+        GitPython.Repo.{branches/heads/tags/refs}
+        """
         targets = [target for target in possible_targets if target.name.endswith(target_name)]
         if len(targets) > 1:
             raise ValueError("Multiple checkout targets for " + target_name)
@@ -114,6 +135,7 @@ class Repo():
 
 
     def checkout(self, checkout_target:str=None):
+        """Git checkout target branch/tag/head/ref"""
         branch: HEAD = self._get_target_from(checkout_target, self.GitPython.branches)
         if branch is not None:
             return branch.checkout()
@@ -137,6 +159,16 @@ class Repo():
         
         
     def _set_version_or_default(self, version=None):
+        """
+        Helper function to handle version params.
+        If the version param...
+        - ... is defined, checkout that target
+        - ... is undefined/None, the default branch will be explicitly checked out
+
+        This way functions that (for example) read file contents can be sure
+        there isn't an incorrect version checked out due to a previous command
+        """
+
         if version:
             self.checkout(version)
         else:
@@ -145,13 +177,23 @@ class Repo():
     
 
     def get_file_path(self, filename, version=None):
-        """When given a filename (and optionally version), return the files' url"""
+        """
+        When given a filename, return the path to the file from the local clone directory.
+
+        If version is defined, attempt to checkout the passed tag/branch/...
+        If version is None, will checkout to default_branch
+        """
         self._set_version_or_default(version)
         return self.local_dir.joinpath(filename)
 
 
     def get_file_contents(self, path, version=None):
-        """Request a files contents. Automatically appends the repo url if a relative path is given"""
+        """
+        When given a filename, return the contents of the file from the local clone directory.
+
+        If version is defined, attempt to checkout the passed tag/branch/...
+        If version is None, will checkout to default_branch
+        """
         try:
             with open(self.get_file_path(path, version), "r") as file:
                 data = file.read()
@@ -161,7 +203,7 @@ class Repo():
     
     @property
     def image(self):
-        """Returns Image object for this repository"""
+        """Returns the Image object for this repository"""
         return self.reposource.imagesource.get_image_by_name(self.imagename)
 
 

@@ -15,7 +15,8 @@ def apply_overrides(repo: object, categories:Dict[str, Category]=categories_from
     When passed a repo object, return it with the needed properties overrided
 
     Optional parameters:
-    - categories: dictionary of categories to use when overriding. Defaults to 
+    - categories: dictionary of categories to use when overriding. Defaults to the categories defined in config/categories.conf
+    - config_path: the name of the conf file containing the overrides to pass to read_config. Defaults to overrides 
     """
     config = read_config(config_path)
 
@@ -28,6 +29,13 @@ def apply_overrides(repo: object, categories:Dict[str, Category]=categories_from
 
 
 def _override_repo_values(repo: object, changes:dict, categories:Dict[str, Category]=categories_from_conf) -> object:
+    """
+    Override a single repo's properties with all the changes defines in the `changes` dict parameter.
+
+    Optional parameter:
+    - categories: dictionary of categories to use when overriding. Defaults to the categories defined in config/categories.conf
+    """
+
     if "imagename" in changes:
         repo.imagename = changes["imagename"]
         log("INFO", f"[OVERRIDE] imagename={repo.imagename}")

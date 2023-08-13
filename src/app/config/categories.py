@@ -1,3 +1,5 @@
+"""This file defines the categories dictionary to use throughout the project"""
+
 # Built-in imports
 from typing import Dict
 
@@ -6,14 +8,15 @@ from . import read_config
 from ..utils import log
 from ..Category import Category
 
-"""
-categories defines the categories to use throughout repo-harvester
-
-- Sort by override, then specific regex
-- Regex & category names below are based on mu-semtech naming conventions
-"""
 
 def _load_categories_from_config(filename="categories") -> Dict[str, Category]:
+    """
+    Reads the .conf file with the passed filename,
+    and exports the categories defined within as a dict with the following structure: {category_id: category_object}
+
+    Optional parameters:
+    - filename: the filename to pass to read_config. Defaults to categories (e.g. config/categories.conf)
+    """
     config = read_config(filename)
 
     categories = {}
@@ -29,6 +32,7 @@ def _load_categories_from_config(filename="categories") -> Dict[str, Category]:
 
 
 categories_from_conf = _load_categories_from_config()
+"""The categories loaded from categories.conf as a dict with the following structure: {category_id: category_object}"""
 
 
 def sort_into_category_dict(repos: list) -> dict:

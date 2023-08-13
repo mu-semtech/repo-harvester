@@ -1,4 +1,4 @@
-"""Defines the Imagesource superclass, as well as the Image class"""
+"""Defines the Imagesource base class, as well as the Image class"""
 
 class Imagesource():
     """

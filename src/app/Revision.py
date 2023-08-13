@@ -3,9 +3,11 @@ from divio_docs_parser import DivioDocs
 
 class Revision():
     """
-    This class holds revision data
+    This class holds revision data.
+    For information on what revisions are, see the relevant README discussion
     
-    This should be kept in line with app-mu-info/"""
+    This should be kept in line with mu-semtech/app-mu-info
+    """
     def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, path_to_repo: str) -> None:
         self.image_tag = image_tag
         self.image_url = image_url

@@ -1,12 +1,8 @@
-from re import search, IGNORECASE
-"""
-All code relevant to categories:
-- Category class 
-- The dict defining the categories to be used
-- Any helper functions
+"""Contains the Category class. For information on what categories are, see the relevant README discussion."""
 
-For information on what categories are, see the relevant README discussion.
-"""
+# Built-in imports
+from re import search, IGNORECASE
+
 
 class Category():
     """

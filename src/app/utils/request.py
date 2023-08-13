@@ -1,3 +1,5 @@
+"""Helper functions to handle requests & caching"""
+
 # Built-in imports
 from os import makedirs, environ
 from os.path import join, exists
@@ -13,18 +15,17 @@ from ..utils import log
 from requests import get, Response
 from slugify import slugify
 
-"""
-Helper functions to handle requests & caching
-"""
-
 TMP_REPOHARVESTER = "/tmp/repo-harvester/"
 def env_var_rh_cache_is_true() -> bool:
+    """Returns True if the RH_CACHE environment variable is defined"""
     return bool(environ.get("RH_CACHE"))
 
 def create_cache(cache_path=TMP_REPOHARVESTER):
+    """Creates directory at cache_path. Defaults to /tmp/repo-harvester"""
     makedirs(cache_path, exist_ok=True)
 
 def clear_cache(cache_path=TMP_REPOHARVESTER):
+    """Removes directory at cache_path. Defaults to /tmp/repo-harvester"""
     rmtree(cache_path, ignore_errors=True)
 
 def _url_to_cachefile_path(url, cache_path=TMP_REPOHARVESTER) -> str:
