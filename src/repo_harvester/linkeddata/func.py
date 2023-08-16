@@ -7,7 +7,9 @@ from ..Repo import Repo
 from ..utils import log
 from .prefixes import PREFIXES
 from .sparql_format_strings import SPARQL_STRING_REPO, SPARQL_STRING_REVISION
+
 # mu-python-template imports
+from flask import copy_current_request_context
 try:
   from helpers import generate_uuid, update
   from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri
@@ -35,7 +37,11 @@ def replace_to_insert(regex_string, prefixes=PREFIXES):
 
 def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, sparql_string_repo=SPARQL_STRING_REPO, sparql_string_revision=SPARQL_STRING_REVISION):
     """When given a List of Repo objects, initialise/update the triplestore"""    
+    #yield "Meow"
     for repo in repos:
+        log("INFO", "Adding "  + repo.name)
+        #yield repo.name
+        #yield "Adding " + repo.name
         repo_uuid = str(uuid3(NAMESPACE_DNS, repo.name)) #generate_uuid()
       
 
@@ -43,7 +49,9 @@ def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, 
         query_string_repos += "\n"
 
         extra_args = ""
-        extra_args += ";\n    ext:imageUrl {imageUrl}" if repo.image.url != "" else ""
+        #extra_args += ";\n    ext:imageUrl {imageUrl}" if repo.image != None else ""
+
+        image_url = repo.image.url if repo.image else ""
 
         query_string_repos += sparql_string_repo.replace("EXTRA", extra_args).format(
             resource=f"repos:{repo_uuid}",
@@ -51,16 +59,23 @@ def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, 
             title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
             description=sparql_escape_string(repo.description),
             category=sparql_escape_uri(repo.category.url),
-            imageUrl=sparql_escape_uri(repo.image.url)
+            #imageUrl=sparql_escape_uri(image_url) 
         )
 
         if init:
           query_string_repos = replace_to_insert(query_string_repos)
         
+        log("INFO", "Updating repo..." + repo.name)
+        #yield "Updating " + repo.name
+        #with app.app_context():
         update(query_string_repos)
+        log("INFO", "Updated repo " + repo.name)
         
-        for revision in repo.revisions:
+        for revision in repo.revisions():
+          log("INFO", revision.repo_tag)
+          #yield "<li>Importing revision" +  str(revision.repo_tag)+ "</li>"
           query_string_revisions = prefixes + "\n"
+          
 
           revision_uuid = str(uuid3(NAMESPACE_DNS, f"{repo.name}-{revision.repo_tag}"))
           revision_resource = f"revisions:{revision_uuid}"

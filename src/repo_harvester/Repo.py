@@ -10,7 +10,7 @@ from typing import Any, List, Dict
 # Relative imports
 from .reposource import Reposource
 from .config import apply_overrides, categories_from_conf
-from .utils import TMP_REPOHARVESTER
+from .utils import TMP_REPOHARVESTER, log
 from .Category import Category
 from .Revision import Revision
 
@@ -100,12 +100,16 @@ class Repo():
         - Determine default branch
         """
         if self.local_dir.exists():
+            log("INFO", f"{self.name} already has a local dir. Loading repo")
             self._GitPython = GitRepo(self.local_dir)
         else:
+            log("INFO", f"Cloning {self.name}")
             self._GitPython = GitRepo.clone_from(self.repo_url, self.local_dir)
         for remote in self.GitPython.remotes:
+            log("INFO", f"Fetching {self.name}")
             remote.fetch()
-            remote.pull()
+            log("INFO", f"Pulling {self.name}")
+            #remote.pull(self.default_branch)  # TODO reimplement
             
         
 
@@ -118,6 +122,9 @@ class Repo():
             self.default_branch = "master"
         else:
             self.default_branch = branches[0]
+        
+        log("INFO", f"Default branch determined: {self.default_branch}")
+
         
 
     def _get_target_from(self, target_name: str, possible_targets: list):
@@ -211,12 +218,19 @@ class Repo():
         """Returns a list of Revisions for this repository"""
         revisions_list = []
 
+        log("INFO", "Meow")
+
         has_tags = len(self.tags) > 0
-        has_images = len(self.image.tags) > 0
+        if self.image is None:
+            has_images = False
+        else:
+            has_images = len(self.image.tags) > 0
         
         if has_tags:
             image = self.image
             for repo_tag in self.tags:
+                log("INFO", repo_tag)
+
                 try:
                     if has_images:
                         stripped_repo_tag = repo_tag.lstrip("v").lstrip("V").lower()

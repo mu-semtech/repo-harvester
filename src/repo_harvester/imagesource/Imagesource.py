@@ -23,6 +23,8 @@ class Imagesource():
     def get_image_by_name(self, name: str):
         """From self.images, find the image with the provided name"""
         for image in self.images:
+            if image is None:
+                continue  # TODO why is there None?
             if image.name.lower() == name.lower():
                 return image
         return None
