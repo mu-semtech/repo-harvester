@@ -1,5 +1,5 @@
 from src.repo_harvester import load_repos_from_config
-from src.repo_harvester.sparql import add_repos_to_triplestore 
+from src.repo_harvester.linkeddata import add_repos_to_triplestore 
 
 """
 Entrypoint for the repo-harvester:
