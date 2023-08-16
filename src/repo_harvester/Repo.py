@@ -223,11 +223,12 @@ class Repo():
                         image_tag = next(filter(lambda image_tag: image_tag.lower() == stripped_repo_tag , image.tags))
 
                     revisions_list.append(Revision(
-                        image_tag if has_images else None,
-                        image.imagesource.url_generator(image) if has_images else None,
-                        repo_tag,
-                        self.reposource.url_generator(self, repo_tag),
-                        self.get_file_contents("README.md", repo_tag)
+                        image_tag=image_tag if has_images else None,
+                        image_url=image.imagesource.url_generator(image) if has_images else None,
+                        repo_tag=repo_tag,
+                        repo_url=self.reposource.url_generator(self, repo_tag),
+                        path_to_repo=self.local_dir,
+                        readme=self.get_file_contents("README.md", repo_tag)
                     ))
                 except StopIteration:
                     pass  # image_tag not found, pass

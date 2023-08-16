@@ -76,6 +76,7 @@ def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, 
               
               repograph = f"repos:{repo_uuid}",
               
+              readme = sparql_escape_string(revision.readme),
               tutorials = sparql_escape_string(revision.tutorials),
               how_to_guides = sparql_escape_string(revision.how_to_guides),
               explanation = sparql_escape_string(revision.explanation),

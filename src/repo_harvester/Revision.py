@@ -8,11 +8,12 @@ class Revision():
     
     This should be kept in line with mu-semtech/app-mu-info
     """
-    def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, path_to_repo: str) -> None:
+    def __init__(self, image_tag: str, image_url: str, repo_tag: str, repo_url: str, path_to_repo: str, readme: str=None) -> None:
         self.image_tag = image_tag
         self.image_url = image_url
         self.repo_tag = repo_tag
         self.repo_url = repo_url
+        self.readme = readme
         self.docs = DivioDocs(input_string_or_path=path_to_repo)
 
 
