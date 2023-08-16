@@ -9,7 +9,6 @@ from .prefixes import PREFIXES
 from .sparql_format_strings import SPARQL_STRING_REPO, SPARQL_STRING_REVISION
 
 # mu-python-template imports
-from flask import copy_current_request_context
 try:
   from helpers import generate_uuid, update
   from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri

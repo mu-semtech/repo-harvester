@@ -27,29 +27,14 @@
     <section>
         <ul id="data"></ul>
     </section>
+    
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script>
-        /*
-        let source = new EventSource("http://localhost:5000/init")
-        source.onerror = function(e) {
-            console.log("er")
-            console.log(e)
-        }
-        source.onmessage = function(e) {
-            console.log(e)
-            $("#data").text(e.data)
-        }*/
-
         function listen() {
             $.ajax({
-                url: "http://localhost:5000/listen",
+                url: "listen",
                 xhrFields: {
-                    onmessage: function(e) {
-                        console.log("message")
-                        console.log(e)
-                    },
                     onprogress: function(e) {
-                        console.log(e)
                         $("#data").html(e.originalTarget.responseText)
                     }
                 }
@@ -57,21 +42,18 @@
         }
 
         function start(init=false) {
-            url = "http://localhost:5000/"
+            let url;
             if (init) {
-                url += "init"
+                url = "init"
             } else {
-                url += "update"
+                url = "update"
             }
             $.ajax(url)
             listen();
         }
-        console.log("meo")
 
         $("#init").click(() => {start(true)})
-        $("#update").click(() => {start(false)})
-        
-        
+        $("#update").click(() => {start(false)})  
     </script>
 </body>
 </html>

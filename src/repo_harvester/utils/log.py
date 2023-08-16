@@ -6,7 +6,7 @@ from logging import log as logging_log, basicConfig, INFO, WARNING, ERROR, CRITI
 
 # mu-python-template import
 from flask import request, make_response, Response 
-import src.repo_harvester.globals
+import src.microservice
 
 try:
     from helpers import log as _mu_log 
@@ -30,8 +30,7 @@ def _log(message: str, level=int, console=env_var_rh_print_is_true()):
     """
     logging_log(level, message)
 
-    #if request:
-    src.repo_harvester.globals.response += f"<li>{message}</li>" 
+    src.microservice.send_to_html += f"<li>{message}</li>" 
 
     if _mu_log:
         _mu_log(message)
