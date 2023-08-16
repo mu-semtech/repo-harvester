@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repo-Harvester</title>
+</head>
+<body>
+    <style>
+        html, body {
+            min-height: 100%;
+        }
+        section {
+            position: relative;
+            height: 90vh;
+            width: 90vh;
+            margin: auto;
+        }
+
+        #data {
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
+
+    <input type="button" value="Init" id="init"><input type="button" value="Update" id="update">
+    <section>
+        <ul id="data"></ul>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        /*
+        let source = new EventSource("http://localhost:5000/init")
+        source.onerror = function(e) {
+            console.log("er")
+            console.log(e)
+        }
+        source.onmessage = function(e) {
+            console.log(e)
+            $("#data").text(e.data)
+        }*/
+
+        function listen() {
+            $.ajax({
+                url: "http://localhost:5000/listen",
+                xhrFields: {
+                    onmessage: function(e) {
+                        console.log("message")
+                        console.log(e)
+                    },
+                    onprogress: function(e) {
+                        console.log(e)
+                        $("#data").html(e.originalTarget.responseText)
+                    }
+                }
+            })
+        }
+
+        function start(init=false) {
+            url = "http://localhost:5000/"
+            if (init) {
+                url += "init"
+            } else {
+                url += "update"
+            }
+            $.ajax(url)
+            listen();
+        }
+        console.log("meo")
+
+        $("#init").click(() => {start(true)})
+        $("#update").click(() => {start(false)})
+        
+        
+    </script>
+</body>
+</html>

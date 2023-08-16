@@ -5,6 +5,9 @@ from os import environ
 from logging import log as logging_log, basicConfig, INFO, WARNING, ERROR, CRITICAL
 
 # mu-python-template import
+from flask import request, make_response, Response 
+import src.repo_harvester.globals
+
 try:
     from helpers import log as _mu_log 
 except ModuleNotFoundError:
@@ -26,6 +29,9 @@ def _log(message: str, level=int, console=env_var_rh_print_is_true()):
     - (If console=True)     Python print                    with the specified message
     """
     logging_log(level, message)
+
+    #if request:
+    src.repo_harvester.globals.response += f"<li>{message}</li>" 
 
     if _mu_log:
         _mu_log(message)
@@ -54,17 +60,17 @@ def log(level: str, message: str, console=env_var_rh_print_is_true()):
 
 def info(message: str, console=env_var_rh_print_is_true()):
     """Wraps _log, with the INFO level"""
-    _log(message, INFO, console)
+    return _log(message, INFO, console)
 
 def warning(message: str, console=env_var_rh_print_is_true()):
     """Wraps _log, with the WARNING level"""
-    _log(message, WARNING, console)
+    return _log(message, WARNING, console)
 
 def error(message: str, console=env_var_rh_print_is_true()):
     """Wraps _log, with the ERROR level"""
-    _log(message, ERROR, console)
+    return _log(message, ERROR, console)
 
 def critical(message: str, console=env_var_rh_print_is_true()):
     """Wraps _log, with the CRITICAL level"""
-    _log(message, CRITICAL, console)
+    return _log(message, CRITICAL, console)
 
