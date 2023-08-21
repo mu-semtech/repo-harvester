@@ -33,3 +33,26 @@ class Revision():
     def reference(self):
         return self.docs.reference
     
+    def _joined(self, section: str):
+        output = ""
+        for key, value in getattr(self, section).items():
+            output += value + "\n\n"
+        
+        return output
+    
+    @property
+    def tutorials_as_string(self):
+        return self._joined("tutorials")
+    
+    @property
+    def how_to_guides_as_string(self):
+        return self._joined("how_to_guides")
+    
+    @property
+    def explanation_as_string(self):
+        return self._joined("explanation")
+    
+    @property
+    def reference_as_string(self):
+        return self._joined("reference")
+    

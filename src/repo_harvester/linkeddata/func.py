@@ -91,10 +91,10 @@ def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, 
               repograph = f"repos:{repo_uuid}",
               
               readme = sparql_escape_string(revision.readme),
-              tutorials = sparql_escape_string(revision.tutorials),
-              how_to_guides = sparql_escape_string(revision.how_to_guides),
-              explanation = sparql_escape_string(revision.explanation),
-              reference = sparql_escape_string(revision.reference),
+              tutorials = sparql_escape_string(revision.tutorials_as_string),
+              how_to_guides = sparql_escape_string(revision.how_to_guides_as_string),
+              explanation = sparql_escape_string(revision.explanation_as_string),
+              reference = sparql_escape_string(revision.reference_as_string),
 
           )
 

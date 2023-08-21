@@ -248,11 +248,12 @@ class Repo():
                     pass  # image_tag not found, pass
         else:
             revisions_list.append(Revision(
-                None,
-                None,
-                self.name,
-                self.reposource.url_generator(self),
-                self.get_file_contents("README.md")
+                image_tag=image_tag if has_images else None,
+                image_url=image.imagesource.url_generator(image) if has_images else None,
+                repo_tag=self.default_branch,
+                repo_url=self.reposource.url_generator(self),
+                path_to_repo=self.local_dir,
+                readme=self.get_file_contents("README.md")
             ))
                 
         return revisions_list
