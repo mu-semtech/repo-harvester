@@ -113,15 +113,18 @@ class Repo():
             
         
 
-        branches = [branch.name for branch in self.GitPython.branches]
-        if False:  # TODO implement arg
-            pass
-        elif "main" in branches:
-            self.default_branch = "main"
-        elif "master" in branches:
-            self.default_branch = "master"
-        else:
-            self.default_branch = branches[0]
+        try:
+            self.default_branch = self.GitPython.git.execute(["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], stdout_as_string=True).split("/", maxsplit=1)[1]
+        except:
+            branches = [branch.name for branch in self.GitPython.branches]
+            if False:  # TODO implement arg
+                pass
+            elif "main" in branches:
+                self.default_branch = "main"
+            elif "master" in branches:
+                self.default_branch = "master"
+            else:
+                self.default_branch = branches[0]
         
         log("INFO", f"Default branch determined: {self.default_branch}")
 
