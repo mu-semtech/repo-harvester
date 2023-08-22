@@ -46,6 +46,12 @@ class Image():
         self.tags = []
         self.imagesource = imagesource
     
+    def get_image_tag_if_exists(self, needle: str):
+        try:
+            return next(filter(lambda image_tag: image_tag.lower() == needle.lower(), self.tags))
+        except StopIteration:
+            return None
+    
     def __str__(self) -> str:
         return f"{self.name}@{self.url}"
     

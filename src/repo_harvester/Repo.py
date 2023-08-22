@@ -13,6 +13,7 @@ from .config import apply_overrides, categories_from_conf
 from .utils import TMP_REPOHARVESTER, log
 from .Category import Category
 from .Revision import Revision
+from .imagesource import Image
 
 # Package imports
 from git import Repo as GitRepo, TagReference, HEAD, Reference
@@ -113,20 +114,26 @@ class Repo():
             
         
 
+    @property
+    def default_branch(self):
+        if hasattr(self, "_default_branch"):
+            return self._default_branch
+        
         try:
-            self.default_branch = self.GitPython.git.execute(["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], stdout_as_string=True).split("/", maxsplit=1)[1]
+            self._default_branch = self.GitPython.git.execute(["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], stdout_as_string=True).split("/", maxsplit=1)[1]
         except:
             branches = [branch.name for branch in self.GitPython.branches]
             if False:  # TODO implement arg
                 pass
             elif "main" in branches:
-                self.default_branch = "main"
+                self._default_branch = "main"
             elif "master" in branches:
-                self.default_branch = "master"
+                self._default_branch = "master"
             else:
-                self.default_branch = branches[0]
+                self._default_branch = branches[0]
         
-        log("INFO", f"Default branch determined: {self.default_branch}")
+        log("INFO", f"Default branch determined: {self._default_branch}")
+        return self.default_branch
 
         
 
@@ -212,7 +219,7 @@ class Repo():
             return None    
     
     @property
-    def image(self):
+    def image(self) -> Image:
         """Returns the Image object for this repository"""
         return self.reposource.imagesource.get_image_by_name(self.imagename)
 
@@ -221,8 +228,24 @@ class Repo():
         """Returns a list of Revisions for this repository"""
         revisions_list = []
 
-        log("INFO", "Meow")
+        log("INFO", "Adding default branch revision")
+        
+        if self.image:
+            default_branch_image_tag = self.image.get_image_tag_if_exists(self.default_branch)
+        else:
+            default_branch_image_tag = None
 
+        revisions_list.append(Revision(
+            image_tag=default_branch_image_tag if default_branch_image_tag else None,
+            image_url=image.imagesource.url_generator(image) if default_branch_image_tag else None,
+            repo_tag=self.default_branch,
+            repo_url=self.reposource.url_generator(self, self.default_branch),
+            path_to_repo=self.local_dir,
+            readme=self.get_file_contents("README.md", self.default_branch)
+        ))
+
+
+        log("INFO", "Determining tagged revisions...")
         has_tags = len(self.tags) > 0
         if self.image is None:
             has_images = False
@@ -234,30 +257,20 @@ class Repo():
             for repo_tag in self.tags:
                 log("INFO", repo_tag)
 
-                try:
-                    if has_images:
-                        stripped_repo_tag = repo_tag.lstrip("v").lstrip("V").lower()
-                        image_tag = next(filter(lambda image_tag: image_tag.lower() == stripped_repo_tag , image.tags))
 
-                    revisions_list.append(Revision(
-                        image_tag=image_tag if has_images else None,
-                        image_url=image.imagesource.url_generator(image) if has_images else None,
-                        repo_tag=repo_tag,
-                        repo_url=self.reposource.url_generator(self, repo_tag),
-                        path_to_repo=self.local_dir,
-                        readme=self.get_file_contents("README.md", repo_tag)
-                    ))
-                except StopIteration:
-                    pass  # image_tag not found, pass
-        else:
-            revisions_list.append(Revision(
-                image_tag=image_tag if has_images else None,
-                image_url=image.imagesource.url_generator(image) if has_images else None,
-                repo_tag=self.default_branch,
-                repo_url=self.reposource.url_generator(self),
-                path_to_repo=self.local_dir,
-                readme=self.get_file_contents("README.md")
-            ))
+                if has_images:
+                    stripped_repo_tag = repo_tag.lstrip("v").lstrip("V").lower()
+                    image_tag = image.get_image_tag_if_exists(needle=stripped_repo_tag)
+
+                revisions_list.append(Revision(
+                    image_tag=image_tag if has_images else None,
+                    image_url=image.imagesource.url_generator(image) if has_images else None,
+                    repo_tag=repo_tag,
+                    repo_url=self.reposource.url_generator(self, repo_tag),
+                    path_to_repo=self.local_dir,
+                    readme=self.get_file_contents("README.md", repo_tag)
+                ))
+
                 
         return revisions_list
 
