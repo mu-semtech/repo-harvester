@@ -58,6 +58,7 @@ def add_repos_to_triplestore(repos: List[Repo], init=False,  prefixes=PREFIXES, 
             title=sparql_escape_string(repo.name), # + datetime.today().strftime("-%H-%M-%S"),
             description=sparql_escape_string(repo.description),
             category=sparql_escape_uri(repo.category.url),
+            defaultBranch=sparql_escape_string(repo.default_branch),
             #imageUrl=sparql_escape_uri(image_url) 
         )
 

@@ -2,7 +2,7 @@
 SPARQL_STRING_REPO = """
 DELETE {{
   GRAPH <http://mu.semte.ch/application> {{
-    {resource} a ext:Repo; dct:title ?title; dct:description ?description; ext:category ?category.
+    {resource} a ext:Repo; dct:title ?title; dct:description ?description; ext:category ?category; ext:defaultBranch ?defaultBranch.
   }}
 }} INSERT {{
   GRAPH <http://mu.semte.ch/application> {{
@@ -10,7 +10,8 @@ DELETE {{
     mu:uuid {uuid};
     dct:title {title};
     dct:description {description};
-    ext:category {category}EXTRA.
+    ext:category {category};
+    ext:defaultBranch {defaultBranch} EXTRA.
   }}
 }} WHERE {{
   GRAPH <http://mu.semte.ch/application> {{
@@ -18,6 +19,7 @@ DELETE {{
     OPTIONAL {{ {resource} dct:title ?title }}
     OPTIONAL {{ {resource} dct:description ?description }}
     OPTIONAL {{ {resource} ext:category ?category }}
+    OPTIONAL {{ {resource} ext:defaultBranch ?defaultBranch }}
   }}
 }}
 """
