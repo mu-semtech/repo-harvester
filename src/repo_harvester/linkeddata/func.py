@@ -10,8 +10,10 @@ from .sparql_format_strings import SPARQL_STRING_REPO, SPARQL_STRING_REVISION
 
 # mu-python-template imports
 try:
-  from helpers import generate_uuid, update
+  from helpers import generate_uuid
   from escape_helpers import sparql_escape_string, sparql_escape_time, sparql_escape_uri
+  from mu_auth_sudo import update_sudo as update
+
 except ModuleNotFoundError:
    def update(): return None
    def sparql_escape_string(): return None
