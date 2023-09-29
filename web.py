@@ -1,6 +1,6 @@
 # Built-in imports
 from time import sleep
-from multiprocessing import Process
+import threading
 
 # Relative imports
 from src.repo_harvester import load_repos_from_config, log
@@ -28,16 +28,27 @@ def index():
 @app.route("/init", methods=["GET", "POST"])
 def init():
     """Calls add_repos_to_triplestore with init, initialising the database"""
+    src.microservice.listening = True
+    thread = threading.Thread(target=run, args=(True,))
+    thread.start()
+    
+    return "Init..."
     return add_repos(init=True)
 
 
 @app.route("/update", methods=["GET", "POST"])
 def update():
     """Calls add_repos_to_triplestore without init, updating the database"""
+    src.microservice.listening = True
+    thread = threading.Thread(target=run, args=(False,))
+    thread.start()
+    
+    return "Updating..."
     return add_repos(init=False)
 
 
-def run(repos, init):
+def run(init):
+    repos = load_repos_from_config()
     add_repos_to_triplestore(repos, init)
     src.microservice.listening = False
 
@@ -47,7 +58,7 @@ def add_repos(init=False):
 
 
 
-    thread = Process(target=run, args=(repos, init,))
+    thread = threading.Thread(target=run, args=(repos, init,))
     thread.start()
 
     
