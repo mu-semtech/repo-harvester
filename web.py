@@ -1,5 +1,6 @@
 # Built-in imports
 from time import sleep
+from multiprocessing import Process
 
 # Relative imports
 from src.repo_harvester import load_repos_from_config, log
@@ -35,14 +36,22 @@ def update():
     """Calls add_repos_to_triplestore without init, updating the database"""
     return add_repos(init=False)
 
+
+def run(repos, init):
+    add_repos_to_triplestore(repos, init)
+    src.microservice.listening = False
+
 def add_repos(init=False):
     src.microservice.listening = True
     repos = load_repos_from_config()
 
-    add_repos_to_triplestore(repos, init)
-    src.microservice.listening = False
+
+
+    thread = Process(target=run, args=(repos, init,))
+    thread.start()
+
     
-    return "<h1>Updated</h1>"
+    return "Updating..."
 
 @app.route("/listen", methods=["GET", "POST"])
 def listen():

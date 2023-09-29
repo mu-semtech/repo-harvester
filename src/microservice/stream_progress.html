@@ -32,7 +32,7 @@
     <script>
         function listen() {
             $.ajax({
-                url: "listen",
+                url: window.location.href + "/listen",
                 xhrFields: {
                     onprogress: function(e) {
                         $("#data").html(e.originalTarget.responseText)
