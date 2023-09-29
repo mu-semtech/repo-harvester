@@ -2,3 +2,4 @@ divio_docs_parser==0.0.4
 GitPython==3.1.32
 Requests==2.31.0
 python-slugify
+git+https://github.com/MikiDi/python-mu-auth-sudo.git@6a5fdcf33357b17d4d3fe2e40019828951e6afbc
