@@ -231,13 +231,14 @@ class Repo():
         log("INFO", "Adding default branch revision")
         
         if self.image:
-            default_branch_image_tag = self.image.get_image_tag_if_exists(self.default_branch)
+            default_branch_image_tag = self.image.get_image_tag_if_exists(self.default_branch) or self.image.get_image_tag_if_exists("latest")
         else:
             default_branch_image_tag = None
 
+
         revisions_list.append(Revision(
             image_tag=default_branch_image_tag if default_branch_image_tag else None,
-            image_url=image.imagesource.url_generator(image) if default_branch_image_tag else None,
+            image_url=self.image.imagesource.url_generator(self.image) if default_branch_image_tag else None,
             repo_tag=self.default_branch,
             repo_url=self.reposource.url_generator(self, self.default_branch),
             path_to_repo=self.local_dir,
