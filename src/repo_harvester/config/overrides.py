@@ -23,6 +23,7 @@ def apply_overrides(repo: object, categories:Dict[str, Category]=categories_from
     overrides = [override for override in config.sections() if search(override, repo.name, IGNORECASE)]
     
     for override in overrides:
+        log("INFO", f"OVERRIDE: {repo.name} - {override} - {config[override]}")
         repo = _override_repo_values(repo, config[override], categories)
     
     return repo

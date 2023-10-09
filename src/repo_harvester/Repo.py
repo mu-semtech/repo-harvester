@@ -61,7 +61,7 @@ class Repo():
         if clone_files:
             self.clone_files()
         
-        #self = override_repo_values(self)
+        self = apply_overrides(self, categories)
     
     @property
     def local_dir(self):
