@@ -112,10 +112,14 @@ class Repo():
             log("INFO", f"Pulling {self.name}")
             #remote.pull(self.default_branch)  # TODO reimplement
             
-        
+    @property
+    def has_branches(self):
+        return len(self.GitPython.branches) >= 1
 
     @property
     def default_branch(self):
+        if not self.has_branches: return
+
         if hasattr(self, "_default_branch"):
             return self._default_branch
         
@@ -153,6 +157,7 @@ class Repo():
 
     def checkout(self, checkout_target:str=None):
         """Git checkout target branch/tag/head/ref"""
+        if not self.has_branches: return
         branch: HEAD = self._get_target_from(checkout_target, self.GitPython.branches)
         if branch is not None:
             return branch.checkout()
@@ -186,6 +191,8 @@ class Repo():
         there isn't an incorrect version checked out due to a previous command
         """
 
+        if not self.has_branches: return
+
         if version:
             self.checkout(version)
         else:
@@ -200,6 +207,8 @@ class Repo():
         If version is defined, attempt to checkout the passed tag/branch/...
         If version is None, will checkout to default_branch
         """
+        if not self.has_branches: return
+
         self._set_version_or_default(version)
         return self.local_dir.joinpath(filename)
 
@@ -211,6 +220,8 @@ class Repo():
         If version is defined, attempt to checkout the passed tag/branch/...
         If version is None, will checkout to default_branch
         """
+        if not self.has_branches: return
+
         try:
             with open(self.get_file_path(path, version), "r") as file:
                 data = file.read()
@@ -226,6 +237,8 @@ class Repo():
 
     def revisions(self) -> List[Revision]:
         """Returns a list of Revisions for this repository"""
+        if not self.has_branches: return []
+
         revisions_list = []
 
         log("INFO", "Adding default branch revision")

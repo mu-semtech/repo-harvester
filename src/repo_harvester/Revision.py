@@ -14,7 +14,7 @@ class Revision():
         self.repo_tag = repo_tag
         self.repo_url = repo_url
         self.readme = readme
-        self.docs = DivioDocs(input_string_or_path=path_to_repo)
+        self.docs = DivioDocs(input_string_or_path=path_to_repo, embed_relative_files=True)
 
 
     @property
