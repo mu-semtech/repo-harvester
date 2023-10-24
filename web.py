@@ -25,31 +25,20 @@ def index():
     """Simple status page to check if the repo harvester works"""
     return get_template()
 
-@app.route("/init", methods=["GET", "POST"])
-def init():
+@app.route("/update", methods=["GET", "POST"])
+def update():
     """Calls add_repos_to_triplestore with init, initialising the database"""
     src.microservice.listening = True
-    thread = threading.Thread(target=run, args=(True,))
+    thread = threading.Thread(target=run)
     thread.start()
     
     return "Init..."
     return add_repos(init=True)
 
-
-@app.route("/update", methods=["GET", "POST"])
-def update():
-    """Calls add_repos_to_triplestore without init, updating the database"""
-    src.microservice.listening = True
-    thread = threading.Thread(target=run, args=(False,))
-    thread.start()
-    
-    return "Updating..."
-    return add_repos(init=False)
-
-
-def run(init):
+def run():
     repos = load_repos_from_config()
-    add_repos_to_triplestore(repos, init)
+    add_repos_to_triplestore(repos, True)
+    add_repos_to_triplestore(repos, False)
     src.microservice.listening = False
 
 def add_repos(init=False):
