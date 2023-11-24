@@ -19,7 +19,7 @@ class DockerHub(Imagesource):
 
     def url_generator(self, image: Image, version: str=None):
         """Override implementation: see Imagesource for more info"""
-        return f"https://registry.hub.docker.com/r/{self.owner}/{image.name}/tags"
+        return f"https://hub.docker.com/r/{self.owner}/{image.name}/tags"
     
     def get_image_url(self, image_name: str):
         """Returns the URL to the image of provided name"""
