@@ -20,7 +20,7 @@ services:
     volumes:
       - ./data/db:/data
   harvester:
-    image: repo-harvester
+    image: repo-harvester:0.1.0
     ports:
       - "5000:80"  # Remove this in production
     links:
